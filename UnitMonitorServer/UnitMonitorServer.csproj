@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0A4B6C87-3B07-411E-AD63-2E77C8267E93}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UnitMonitorServer</RootNamespace>
+    <AssemblyName>UnitMonitorServer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ClientsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClientsForm.designer.cs">
+      <DependentUpon>ClientsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\WcfService\ClientInfo.cs" />
+    <Compile Include="Components\WcfService\Clients.cs" />
+    <Compile Include="Components\WcfService\ServerCommunication.cs" />
+    <Compile Include="Components\WcfService\Service.cs" />
+    <Compile Include="DebugDataForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DebugDataForm.designer.cs">
+      <DependentUpon>DebugDataForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmTasks.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTasks.designer.cs">
+      <DependentUpon>frmTasks.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MDIMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MDIMain.designer.cs">
+      <DependentUpon>MDIMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TaskContainerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskContainerForm.designer.cs">
+      <DependentUpon>TaskContainerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TaskTempValueForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskTempValueForm.designer.cs">
+      <DependentUpon>TaskTempValueForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="ClientsForm.resx">
+      <DependentUpon>ClientsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DebugDataForm.resx">
+      <DependentUpon>DebugDataForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTasks.resx">
+      <DependentUpon>frmTasks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MDIMain.resx">
+      <DependentUpon>MDIMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="TaskContainerForm.resx">
+      <DependentUpon>TaskContainerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TaskTempValueForm.resx">
+      <DependentUpon>TaskTempValueForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Clients.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ModuleSettings\MainSteam.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ModuleSettings\MainSteam.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ModuleSettings\mill.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ModuleSettings\mill.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ModuleSettings\SCR.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ModuleSettings\SCR.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Tasks\5号机组\汽机\5号机蒸汽系统.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Tasks\5号机组\锅炉\5A磨.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Tasks\5号机组\锅炉\5号机脱硝.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Tasks\6号机组\锅炉\6号机脱硝.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Boiler\Boiler.csproj">
+      <Project>{f9aded58-5810-4416-8936-811dafa58714}</Project>
+      <Name>Boiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommunicationBase\CommunicationBase.csproj">
+      <Project>{a07a05af-6f11-4f48-984b-3e54e91bfe2f}</Project>
+      <Name>CommunicationBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Turbine\Turbine.csproj">
+      <Project>{ff5ece05-fd22-48f4-b32d-bc2776de34cd}</Project>
+      <Name>Turbine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnitMonitorCommon\UnitMonitorCommon.csproj">
+      <Project>{3565c829-7d1b-4165-9c14-dc86c79946ff}</Project>
+      <Name>UnitMonitorCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EzDnaApi.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\DataSources\" />
+    <Folder Include="Tasks\5号机组\电气\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
