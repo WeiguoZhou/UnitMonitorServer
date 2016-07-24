@@ -126,12 +126,8 @@ namespace UnitMonitorServer
 
         private void MDIMain_Load(object sender, EventArgs e)
         {
-            //让组件初始化
-            TasksContainer conttainer = TasksContainer.Instance();
-            MessageCenter center = MessageCenter.Instance();
-            center.SendMessageEvent += Logger.Instance().LogMessage;
-            Clients clients = Clients.Instance();
-            ServerCommunication.Instance().StartService();
+            
+
             
  
         }

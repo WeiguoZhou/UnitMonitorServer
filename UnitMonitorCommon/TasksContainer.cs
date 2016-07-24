@@ -23,14 +23,22 @@ namespace UnitMonitorCommon
         int period=5;
         DataMode mode = DataMode.RealTime;
         public event EventHandler RunComplete;
-        public static TasksContainer Instance()
+        public static TasksContainer Instance
+        {
+            get
+            {
+                return instance;
+
+            }
+
+        }
+        public static void Init()
         {
             if (instance == null)
             {
                 instance = new TasksContainer();
 
             }
-            return instance;
         }
         public int RunCount { private set; get; }
         public  DataMode Mode {
@@ -96,7 +104,7 @@ namespace UnitMonitorCommon
             RunCount = 0;
             if(Mode!=DataMode.Debug)
                 timer = new Timer(RunTasks, null, 1000,Period * 1000);
-            MessageCenter.Instance().SendMessage(MessageType.System, "任务中心启动", "System");
+            MessageCenter.Instance.SendMessage(MessageType.System, "任务中心启动", "System");
         }
         public void StepRun()
         {
@@ -114,7 +122,7 @@ namespace UnitMonitorCommon
                 }
                 IsRunning = false;
                 this.Clear();
-                MessageCenter.Instance().SendMessage(MessageType.System, "任务中心已停止运行", "System");
+                MessageCenter.Instance.SendMessage(MessageType.System, "任务中心已停止运行", "System");
             }
         }
         private TasksContainer()
@@ -151,14 +159,14 @@ namespace UnitMonitorCommon
                     task.Config = doc;
                     task.ConfigFileInfo = configFile;
                     string sharedConfigName = task.GetType().Name;
-                    task.SharedConfig = TasksContainer.Instance().GetSharedConfig(sharedConfigName);
+                    task.SharedConfig = TasksContainer.Instance.GetSharedConfig(sharedConfigName);
                     return task;
                 }
             }
             catch (Exception ex)
             {
                 string message = string.Format("任务容器加载任务时出错。任务名称：{0}，错误消息{1}", configFile.Name, ex.Message);
-                Logger.Instance().LogDebug(message);
+                Logger.Instance.LogDebug(message);
             }
             return null;
 

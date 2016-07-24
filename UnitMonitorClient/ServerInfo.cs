@@ -76,18 +76,17 @@ namespace UnitMonitorClient
 
         public  void TryLink()
         {
-            string ip = ClientCommunication.Instance().Ip;
-            int port = ClientCommunication.Instance().Port;
-            bool isLinked = true;
+            string ip = ClientCommunication.Ip;
+            int port = ClientCommunication.Port;
             if (this.IsOnline)
             {
                 try
                 {
-                    RegClient(ip, port);
+                    this.IsOnline=RegClient(ip, port);
                 }
                 catch
                 {
-                    isLinked = false;
+                    
                 }
             }
             else
@@ -102,9 +101,10 @@ namespace UnitMonitorClient
                         cf.Endpoint.Binding.OpenTimeout = TimeSpan.FromSeconds(5);
                         cf.Endpoint.Binding.SendTimeout = TimeSpan.FromSeconds(5);
                         cf.Faulted += OnClientFaulted;
-                        if (RegClient(ip, port))
-                        {         
-                            this.IsOnline = true;
+                        this.IsOnline = RegClient(ip, port);
+                        if (this.IsOnline)
+                        {
+                            this.OnlineTime = DateTime.Now;      
                             if (this.Online != null)
                                 this.Online(this, null);
                         }
@@ -112,24 +112,17 @@ namespace UnitMonitorClient
                     }
                     catch
                     {
-                        isLinked = false;
 
                     }
                 }
 
             }
-            if (!isLinked)
+            if (!this.IsOnline)
             {
                 cf = null;
-                if (this.IsOnline)
-                {
-                    this.IsOnline = false;
-                    if (this.Offline != null)
-                        this.Offline(this, null);
-                }
+                this.OnlineTime = DateTime.MinValue;
+                SendMessageCount = 0;
             }
-
-
 
         }
 
@@ -159,10 +152,9 @@ namespace UnitMonitorClient
                 if (cf != null)
                 {
 
-
                     if (State == CommunicationState.Faulted)
                         cf.Abort();
-                    if (State == CommunicationState.Opened)
+                    if (State != CommunicationState.Closed)
                         cf.Close();
                 }
                 this.IsOnline = false;

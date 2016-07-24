@@ -24,12 +24,19 @@ namespace UnitMonitorClient
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            ClientMessageCenter.Instance.RecievedSubscribedMessage += AddMessage;
-            ClientCommunication.Instance().StartService();
+            ClientMessageCenter.Instance.RecievedSubscribedMessage += OnRecievedSubscribedMessage;
+           
    
 
         }
 
+        private void OnRecievedSubscribedMessage(MessageInfo info)
+        {
+            if (this.InvokeRequired)
+                this.Invoke(new MessageEventHandler(AddMessage), info);
+            else
+                AddMessage(info);
+        }
         private void AddMessage(MessageInfo info)
         {
             int index = dgvMessages.Rows.Add();
@@ -81,7 +88,7 @@ namespace UnitMonitorClient
 
         private void toolExit_Click(object sender, EventArgs e)
         {
-            ClientCommunication.Instance().StopService();
+            ClientCommunication.Instance.StopService();
             Application.Exit();
         }
 

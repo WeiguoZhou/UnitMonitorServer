@@ -125,7 +125,7 @@ namespace Boiler
             {
                  if((vMillCurrent > 35) && !vOilPumpState.IsOn())
                       SendMessge(MessageType.Danger, string.Format("{0}磨煤机运行但油泵未运行", this.TaskName));  //连续报警
-                DateTime currentTime = TasksContainer.Instance().CurrentTime;
+                DateTime currentTime = TasksContainer.Instance.CurrentTime;
                 if (!this.TempValue.ContainsKey("MillRunTime"))
                     this.TempValue.Add("MillRunTime", currentTime);
                 

@@ -16,6 +16,11 @@ namespace UnitMonitorClient
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            Servers.Init();
+            ClientMessageCenter.Init();
+             ClientCommunication.Init();
+                    
             Application.Run(new MainForm());
         }
     }

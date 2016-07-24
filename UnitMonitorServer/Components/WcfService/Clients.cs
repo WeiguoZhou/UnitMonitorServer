@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-
+using UnitMonitorCommon;
+using UnitMonitorCommunication;
 
 namespace UnitMonitorServer
 {
@@ -17,11 +18,20 @@ namespace UnitMonitorServer
 
         public event EventHandler ClientChanged;
         private static Clients instance;
-        public static Clients Instance()
+        public static Clients Instance
+        {
+            get
+            {
+                return instance;
+            }
+
+        }
+        public static void Init()
         {
             if (instance == null)
                 instance = Clients.LoadClients();
-            return instance;
+            MessageCenter.Init();
+            MessageCenter.Instance.SendMessageEvent += instance.SendMessage;
         }
         private Clients()
         {
@@ -49,7 +59,7 @@ namespace UnitMonitorServer
                     this.DelClient(ip);
                     this.SaveClient(client);
                 }
-   
+
             }
             return true;
         }
@@ -59,12 +69,13 @@ namespace UnitMonitorServer
             {
                 ClientChanged(sender, e);
             }
-            int index =this.IndexOf( (ClientInfo)sender);
+            int index = this.IndexOf((ClientInfo)sender);
             ListChangedEventArgs args = new ListChangedEventArgs(ListChangedType.Reset, index);
             this.OnListChanged(args);
         }
 
-        private static string ConfigFilePath {
+        private static string ConfigFilePath
+        {
             get
             {
                 return Environment.CurrentDirectory + "\\clients.config";
@@ -78,7 +89,7 @@ namespace UnitMonitorServer
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(ConfigFilePath);
-            XmlNode node = doc.SelectSingleNode(string.Format("\\configuration\\clients\\client[@ip={0}",ip));
+            XmlNode node = doc.SelectSingleNode(string.Format("\\configuration\\clients\\client[@ip={0}", ip));
             if (node == null)
             {
                 doc.RemoveChild(node);
@@ -144,15 +155,25 @@ namespace UnitMonitorServer
         {
             Task.Run(() =>
             {
-                string ip = ServerCommunication.Instance().Ip;
+                string ip = ServerCommunication.Ip;
                 foreach (ClientInfo item in this)
                 {
                     item.ServiceShutOff(ip);
                 }
             });
         }
+        public void SendMessage(MessageInfo message)
+        {
 
+            Task.Run(() =>
+            {
+                foreach (ClientInfo item in this)
+                {
+                    item.SendMessage(message);
+                }
+            });
 
+        }
     }
 }
 

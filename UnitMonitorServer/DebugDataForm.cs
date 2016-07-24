@@ -104,7 +104,7 @@ namespace UnitMonitorServer
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            TasksContainer.Instance().StepRun();
+            TasksContainer.Instance.StepRun();
         }
 
         private void toolTempValuesForm_Click(object sender, EventArgs e)

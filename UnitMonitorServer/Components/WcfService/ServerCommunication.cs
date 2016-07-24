@@ -10,14 +10,15 @@ using UnitMonitorCommunication;
 using System.ServiceModel.Description;
 using UnitMonitorCommon;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace UnitMonitorServer
 {
   public  class ServerCommunication
     {
         WebServiceHost svcHost;
-        string ip="";
-        public string Ip { get
+       static string ip="";
+        public static string Ip { get
             {
                 if (string.IsNullOrEmpty(ip))
                     foreach (IPAddress item in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
@@ -28,7 +29,13 @@ namespace UnitMonitorServer
                 return ip;
             }
         }
-        public int Port {
+
+        internal void OnApplicationExit(object sender, EventArgs e)
+        {
+            StopService();
+        }
+
+        public static int Port {
             get
             {
                 return Properties.Settings.Default.Port;
@@ -50,14 +57,23 @@ namespace UnitMonitorServer
             }
         }
         static ServerCommunication instance;
-        public static ServerCommunication Instance()
+        public static ServerCommunication Instance
+        {
+            get
+            {
+                return instance;   
+            }
+
+        }
+        public static void Init()
         {
             if (instance == null)
             {
                 instance = new ServerCommunication();
-                
+                instance.StartService();
+                Application.ApplicationExit += ServerCommunication.Instance.OnApplicationExit;
+
             }
-            return instance;   
         }
         public void StartService()
         {
@@ -85,56 +101,41 @@ namespace UnitMonitorServer
                     break;
                 case CommunicationState.Opening:
                     break;
-                case CommunicationState.Opened:
-
-                   MessageCenter.Instance().SendMessageEvent += SendMessageHandler;
-                    MessageCenter.Instance().SendMessage(MessageType.System, string.Format("位于{0}的{1}服务已准备就绪", Url, ServerName), "");
+                case CommunicationState.Opened:   
+                    MessageCenter.Instance.SendMessage(MessageType.System, string.Format("位于{0}的{1}服务已准备就绪", Url, ServerName), "");
                     RegServer();
                     break;
                 case CommunicationState.Closing:
                     break;
                 case CommunicationState.Closed:
-                    MessageCenter.Instance().SendMessage(MessageType.System, string.Format("位于{0}的{1}服务已终止", Url, ServerName), "");
+                    MessageCenter.Instance.SendMessage(MessageType.System, string.Format("位于{0}的{1}服务已终止", Url, ServerName), "");
                     break;
                 case CommunicationState.Faulted:
-                    MessageCenter.Instance().SendMessage(MessageType.System, string.Format("位于{0}的{1}服务失败", Url, ServerName), "");
+                    MessageCenter.Instance.SendMessage(MessageType.System, string.Format("位于{0}的{1}服务失败", Url, ServerName), "");
+                    svcHost.Abort();
                     break;
                 default:
                     break;
             }
         }
 
-        private void SendMessageHandler(MessageInfo inf)
-        {
 
-            Thread thread = new Thread(SendMessage);
-            thread.Start(inf);
-        }
 
-        public void Stopervice()
+        public void StopService()
         {
-            Clients.Instance().ServerShutOff();
+            Clients.Instance.ServerShutOff();
 
             if ((svcHost != null) && (svcHost.State != CommunicationState.Closed))
                 svcHost.Close();
-            MessageCenter.Instance().SendMessageEvent -= SendMessageHandler;
         }
-        public void SendMessage(object state)
-        {
-           MessageInfo inf = (MessageInfo)state;
+     
 
-            foreach (ClientInfo item in Clients.Instance())
-            {
-                item.SendMessage(inf);
-            }
-            
-        }
         public void RegServer()
         {
 
             Task.Run(() =>
             {
-                foreach (ClientInfo item in Clients.Instance())
+                foreach (ClientInfo item in Clients.Instance)
                 {
                     item.RegServer(Ip,Port);
                 }

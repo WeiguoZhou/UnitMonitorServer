@@ -36,13 +36,13 @@
             this.toolCancelLink = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTasks = new System.Windows.Forms.ToolStripMenuItem();
             this.dgvServers = new System.Windows.Forms.DataGridView();
+            this.serversBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ipDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.portDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.stateDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IsOnlineDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sendMessageCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.onlineTimeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.serversBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvServers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.serversBindingSource)).BeginInit();
@@ -57,7 +57,7 @@
             this.toolCancelLink,
             this.toolTasks});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(161, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(161, 114);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // toolNew
@@ -103,7 +103,7 @@
             this.nameDataGridViewTextBoxColumn,
             this.ipDataGridViewTextBoxColumn,
             this.portDataGridViewTextBoxColumn,
-            this.stateDataGridViewTextBoxColumn,
+            this.IsOnlineDataGridViewTextBoxColumn,
             this.sendMessageCountDataGridViewTextBoxColumn,
             this.onlineTimeDataGridViewTextBoxColumn});
             this.dgvServers.ContextMenuStrip = this.contextMenuStrip1;
@@ -115,6 +115,10 @@
             this.dgvServers.RowTemplate.Height = 23;
             this.dgvServers.Size = new System.Drawing.Size(523, 313);
             this.dgvServers.TabIndex = 1;
+            // 
+            // serversBindingSource
+            // 
+            this.serversBindingSource.DataSource = typeof(UnitMonitorClient.Servers);
             // 
             // nameDataGridViewTextBoxColumn
             // 
@@ -140,12 +144,12 @@
             this.portDataGridViewTextBoxColumn.ReadOnly = true;
             this.portDataGridViewTextBoxColumn.Width = 60;
             // 
-            // stateDataGridViewTextBoxColumn
+            // IsOnlineDataGridViewTextBoxColumn
             // 
-            this.stateDataGridViewTextBoxColumn.DataPropertyName = "State";
-            this.stateDataGridViewTextBoxColumn.HeaderText = "状态";
-            this.stateDataGridViewTextBoxColumn.Name = "stateDataGridViewTextBoxColumn";
-            this.stateDataGridViewTextBoxColumn.ReadOnly = true;
+            this.IsOnlineDataGridViewTextBoxColumn.DataPropertyName = "IsOnline";
+            this.IsOnlineDataGridViewTextBoxColumn.HeaderText = "是否在线";
+            this.IsOnlineDataGridViewTextBoxColumn.Name = "IsOnlineDataGridViewTextBoxColumn";
+            this.IsOnlineDataGridViewTextBoxColumn.ReadOnly = true;
             // 
             // sendMessageCountDataGridViewTextBoxColumn
             // 
@@ -161,10 +165,6 @@
             this.onlineTimeDataGridViewTextBoxColumn.HeaderText = "上线时间";
             this.onlineTimeDataGridViewTextBoxColumn.Name = "onlineTimeDataGridViewTextBoxColumn";
             this.onlineTimeDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // serversBindingSource
-            // 
-            this.serversBindingSource.DataSource = typeof(UnitMonitorClient.Servers);
             // 
             // ServersForm
             // 
@@ -188,15 +188,15 @@
         private System.Windows.Forms.ToolStripMenuItem toolLink;
         private System.Windows.Forms.ToolStripMenuItem toolNew;
         private System.Windows.Forms.DataGridView dgvServers;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ipDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn portDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn stateDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sendMessageCountDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn onlineTimeDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn isOnLineDataGridViewCheckBoxColumn;
+       
         private System.Windows.Forms.BindingSource serversBindingSource;
         private System.Windows.Forms.ToolStripMenuItem toolCancelLink;
         private System.Windows.Forms.ToolStripMenuItem toolTasks;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ipDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn portDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IsOnlineDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sendMessageCountDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn onlineTimeDataGridViewTextBoxColumn;
     }
 }

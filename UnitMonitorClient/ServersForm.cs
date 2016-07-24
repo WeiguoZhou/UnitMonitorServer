@@ -17,7 +17,7 @@ namespace UnitMonitorClient
 
         private void ServersForm_Load(object sender, EventArgs e)
         {
-            serversBindingSource.DataSource = Servers.Instance();
+            serversBindingSource.DataSource = Servers.Instance;
 
         }
 
@@ -34,7 +34,7 @@ namespace UnitMonitorClient
                 }
 
                 toolDel.Enabled = true;
-                ServerInfo info = Servers.Instance()[dgvServers.SelectedRows[0].Index];
+                ServerInfo info = Servers.Instance[dgvServers.SelectedRows[0].Index];
 
 
                 if (info.IsOnline)
@@ -60,10 +60,10 @@ namespace UnitMonitorClient
         {
             if (dgvServers.SelectedRows[0].Index == dgvServers.NewRowIndex)
                 return;
-            ServerInfo info = Servers.Instance()[dgvServers.SelectedRows[0].Index];
+            ServerInfo info = Servers.Instance[dgvServers.SelectedRows[0].Index];
             info.TurnOffLine();
-            Servers.Instance().Remove(info);
-            Servers.Instance().DelServer(info.Ip);
+            Servers.Instance.Remove(info);
+            Servers.Instance.DelServer(info.Ip);
         }
 
         private void toolNew_Click(object sender, EventArgs e)
@@ -76,7 +76,7 @@ namespace UnitMonitorClient
         {
             if (dgvServers.SelectedRows[0].Index == dgvServers.NewRowIndex)
                 return;
-            ServerInfo info = Servers.Instance()[dgvServers.SelectedRows[0].Index];
+            ServerInfo info = Servers.Instance[dgvServers.SelectedRows[0].Index];
             info.TurnOffLine();
         }
 
@@ -86,7 +86,7 @@ namespace UnitMonitorClient
             {
                 try
                 {
-                    ServerInfo info = Servers.Instance()[dgvServers.SelectedRows[0].Index];
+                    ServerInfo info = Servers.Instance[dgvServers.SelectedRows[0].Index];
                     if ((info != null) && (info.Channel != null))
                     {
                         TaskInfo[] tasks = info.Channel.Tasks();
@@ -111,7 +111,7 @@ namespace UnitMonitorClient
             {
                 try
                 {
-                    ServerInfo info = Servers.Instance()[dgvServers.SelectedRows[0].Index];
+                    ServerInfo info = Servers.Instance[dgvServers.SelectedRows[0].Index];
                     if (info != null)
                     {
                         info.TryLink();

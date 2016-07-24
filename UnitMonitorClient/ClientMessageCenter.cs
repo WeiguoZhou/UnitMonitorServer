@@ -26,12 +26,31 @@ namespace UnitMonitorClient
         {
             get
             {
-                if (instance == null)
-                    instance = new ClientMessageCenter();
                 return instance;
             }
         }
+        public static void Init()
+        {
+            if (instance == null)
+            {
+                instance = new ClientMessageCenter();
+                Servers.Instance.ServerChanged += instance.OnServerChanged;
+            }
+        }
+        public void OnServerChanged(object sender, EventArgs e)
+        {
+            ServerInfo server = (ServerInfo)sender;
+            MessageInfo info = new MessageInfo();
+            info.MessageType = MessageType.System;
+            info.SenderUrl = server.Ip;
+            if (server.IsOnline)
 
+                info.Message = string.Format("位于{0}的服务器已启动", server.Ip);
+            else
+                info.Message = string.Format("位于{0}的服务器已停止", server.Ip);
+            RaiseRecievedMessage(info);
+
+        }
         public void RaiseRecievedMessage( MessageInfo info)
         {
 

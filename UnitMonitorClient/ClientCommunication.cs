@@ -7,6 +7,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using UnitMonitorCommunication;
 
 namespace UnitMonitorClient
@@ -15,8 +16,8 @@ namespace UnitMonitorClient
     {
         WebServiceHost svcHost;
 
-        string ip = "";
-        public string Ip
+      static  string ip = "";
+        public static string Ip
         {
             get
             {
@@ -29,7 +30,7 @@ namespace UnitMonitorClient
                 return ip;
             }
         }
-        public int Port
+        public static int Port
         {
             get
             {
@@ -60,16 +61,30 @@ namespace UnitMonitorClient
         }
       public event EventHandler ServiceHostStateChanged;
         static ClientCommunication instance;
-        public static ClientCommunication Instance()
+        public void  OnApplicationExit(object sender, EventArgs e)
+        {
+            StopService();
+        }
+
+        public static ClientCommunication Instance
+        {
+            get
+            {
+                return instance;
+            }
+
+        }
+        public static void Init()
         {
             if (instance == null)
             {
                 instance = new ClientCommunication();
-
+                instance.StartService();
+                Application.ApplicationExit += ClientCommunication.Instance.OnApplicationExit;
             }
-            return instance;
+
         }
-        public void StartService()
+       public void StartService()
         {
 
             Uri baseAddress = new Uri(Url);
@@ -128,7 +143,7 @@ namespace UnitMonitorClient
             {
                 string ip = Ip;
                 int port = Port;
-                foreach (ServerInfo item in Servers.Instance())
+                foreach (ServerInfo item in Servers.Instance)
                 {
                     item.RegClient(ip,port);
                 }
@@ -138,7 +153,7 @@ namespace UnitMonitorClient
         public void RaiseRecievedMessage(MessageInfo info)
         {
 
-            ServerInfo server = Servers.Instance().FindServer(info.SenderUrl);
+            ServerInfo server = Servers.Instance.FindServer(info.SenderUrl);
             if (server != null)
                 server.SendMessageCount += 1;
   
@@ -147,7 +162,7 @@ namespace UnitMonitorClient
         }
         public void StopService()
         {
-            
+           
             if ((svcHost != null) && (SvcHost.State != CommunicationState.Closed))
                 svcHost.Close();
         }

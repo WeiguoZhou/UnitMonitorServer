@@ -31,7 +31,7 @@ namespace UnitMonitorCommon
                 {
                     string beginTimeKey = preKey + "_BeginTime";
                     DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
-                    DateTime currentTime = TasksContainer.Instance().CurrentTime;
+                    DateTime currentTime = TasksContainer.Instance.CurrentTime;
                     int continueCount = Convert.ToInt32(CommUtil.TimeSecondSpan(beginTime, currentTime));
                     task.SendMessge(MessageType.Alarm, string.Format("{0}小于{1},持续{2}", task.PointNameDescription(pointAlias), lValue, continueCount));
                 }
@@ -60,7 +60,7 @@ namespace UnitMonitorCommon
                 {
                     string beginTimeKey = preKey + "_BeginTime";
                     DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
-                    DateTime currentTime = TasksContainer.Instance().CurrentTime;
+                    DateTime currentTime = TasksContainer.Instance.CurrentTime;
                     int continueCount = Convert.ToInt32(CommUtil.TimeSecondSpan(beginTime, currentTime));
                     task.SendMessge(MessageType.Alarm, string.Format("{0}小于{1},持续{2}", task.PointNameDescription(pointAlias), hValue, continueCount));
                 }
@@ -115,7 +115,7 @@ namespace UnitMonitorCommon
                 returnValue = TaskExtensions.CanTdOn(task, Math.Abs(oldValue - value) < clValue, tdOnSec, preKey);
                 if(returnValue && outputAlarm)
                 {
-                    DateTime currentTime = TasksContainer.Instance().CurrentTime;
+                    DateTime currentTime = TasksContainer.Instance.CurrentTime;
                     string beginTimeKey = preKey + "_BeginTime";
                     DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
                     int continueCount = Convert.ToInt32(CommUtil.TimeSecondSpan(beginTime, currentTime));
@@ -142,7 +142,7 @@ namespace UnitMonitorCommon
             bool returnValue = false;
             string preKey = pointAlias + "_AnalogChangeH_" + chValue.ToString() + "_" + statisticsSec.ToString();
             string statisticsBeginTimeKey = preKey + "_StatisticsBeginTime";
-            DateTime currentTime = TasksContainer.Instance().CurrentTime;
+            DateTime currentTime = TasksContainer.Instance.CurrentTime;
             if (!task.TempValue.ContainsKey(statisticsBeginTimeKey))
                 task.TempValue.Add(statisticsBeginTimeKey, currentTime);
             DateTime statisticsBeginTime = (DateTime)task.TempValue[statisticsBeginTimeKey];

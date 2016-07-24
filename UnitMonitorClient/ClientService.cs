@@ -15,7 +15,7 @@ namespace UnitMonitorClient
       public  bool SendMessage(MessageInfo message)
         {
 
-            ClientCommunication.Instance().RaiseRecievedMessage(message);
+            ClientCommunication.Instance.RaiseRecievedMessage(message);
             return true;
             
         }
@@ -29,7 +29,7 @@ namespace UnitMonitorClient
 
       public  bool RegService(string ip,string port)
         {
-            Servers.Instance().RegServer(ip, Convert.ToInt32(port));
+            Servers.Instance.RegServer(ip, Convert.ToInt32(port));
             return true;
 
         }
@@ -38,7 +38,7 @@ namespace UnitMonitorClient
 
         public bool ServiceShutOff(string ip)
         {
-            Servers.Instance().ServerTurnOff(ip);
+            Servers.Instance.ServerTurnOff(ip);
             return true;
         }
     }

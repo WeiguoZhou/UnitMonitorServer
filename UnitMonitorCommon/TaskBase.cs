@@ -80,7 +80,7 @@ namespace UnitMonitorCommon
         {
             get
             {
-                return TasksContainer.Instance().Contains(this);
+                return TasksContainer.Instance.Contains(this);
             }
         }
 
@@ -131,7 +131,7 @@ namespace UnitMonitorCommon
         protected virtual void Process() { }
         public void Run()
         {
-            if (TasksContainer.Instance().RunCount % (Period/ TasksContainer.Instance().Period) != 0)
+            if (TasksContainer.Instance.RunCount % (Period/ TasksContainer.Instance.Period) != 0)
                 return;
             DateTime beginTime = DateTime.Now;
             try
@@ -153,7 +153,7 @@ namespace UnitMonitorCommon
                 LastSuccess = false;
                 //记录出错信息
                 string message = string.Format("任务执行出错：任务模块:{0}，出错信息:{1}", this.TaskName, ex.Message);
-                Logger.Instance().LogDebug(message);
+                Logger.Instance.LogDebug(message);
                 if (AfterTaskErr != null)
                     AfterTaskErr(this, ex);
 
@@ -185,7 +185,7 @@ namespace UnitMonitorCommon
         {
             if (TaskAdded != null)
                 TaskAdded(this);
-            this.RunComplete += TasksContainer.Instance().OnTaskChanged;
+            this.RunComplete += TasksContainer.Instance.OnTaskChanged;
         }
         private List<string> GetUsedPoints()
         {
@@ -204,9 +204,9 @@ namespace UnitMonitorCommon
         {
             List<string> usedPoints = GetUsedPoints();
            
-            if (TasksContainer.Instance().Mode == DataMode.RealTime)
+            if (TasksContainer.Instance.Mode == DataMode.RealTime)
                 InitRealData(usedPoints);
-            if (TasksContainer.Instance().Mode == DataMode.History)
+            if (TasksContainer.Instance.Mode == DataMode.History)
                 InitHistoryData(usedPoints);
 
         }
@@ -273,7 +273,7 @@ namespace UnitMonitorCommon
                     point.Value = values.Dequeue();
                 else
                 {
-                    values = Dna.DNAGetHistValue(id, TasksContainer.Instance().CurrentTime, Period);
+                    values = Dna.DNAGetHistValue(id, TasksContainer.Instance.CurrentTime, Period);
                     historyValues[id] = values;
                     point.Value = values.Dequeue();
                 }
@@ -413,7 +413,7 @@ namespace UnitMonitorCommon
 
         public void SendMessge(MessageType messageType, string messge)
         {
-            MessageCenter.Instance().SendMessage(messageType, messge, this.TaskPath);
+            MessageCenter.Instance.SendMessage(messageType, messge, this.TaskPath);
 
         }
         public void RemoveRelatedKey(string preKey)

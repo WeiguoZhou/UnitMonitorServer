@@ -22,11 +22,11 @@ namespace UnitMonitorServer
 
         private void TaskContainerForm_Load(object sender, EventArgs e)
         {
-            tasksContainerBindingSource.DataSource = TasksContainer.Instance();
+            tasksContainerBindingSource.DataSource = TasksContainer.Instance;
             PaintTreeView();
             RefreshToolButton();
             _UpdateStatus();
-            TasksContainer.Instance().RunComplete += UpdateStatus;
+            TasksContainer.Instance.RunComplete += UpdateStatus;
 
         }
 
@@ -42,13 +42,13 @@ namespace UnitMonitorServer
         private void _UpdateStatus()
         {
           
-            StatusTasksContainer.Text = string.Format("状态：运行次数{0}，上次花费时间{1}毫秒", TasksContainer.Instance().RunCount, TasksContainer.Instance().LastSpendTime);
+            StatusTasksContainer.Text = string.Format("状态：运行次数{0}，上次花费时间{1}毫秒", TasksContainer.Instance.RunCount, TasksContainer.Instance.LastSpendTime);
         }
 
         private void RefreshToolButton()
         {
-            TasksContainer instance = TasksContainer.Instance();
-            switch (TasksContainer.Instance().Mode)
+            TasksContainer instance = TasksContainer.Instance;
+            switch (TasksContainer.Instance.Mode)
             {
                 case DataMode.RealTime:
                     cbMode.SelectedItem = "实时模式";
@@ -60,7 +60,7 @@ namespace UnitMonitorServer
                     cbMode.SelectedItem = "调试模式";
                     break;
             }
-            cbPeriod.SelectedItem = TasksContainer.Instance().Period.ToString();
+            cbPeriod.SelectedItem = TasksContainer.Instance.Period.ToString();
             if (instance.IsRunning)
             {
                 btnRun.Enabled = false;
@@ -83,37 +83,37 @@ namespace UnitMonitorServer
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            if (!TasksContainer.Instance().IsRunning)
-                TasksContainer.Instance().Start();
+            if (!TasksContainer.Instance.IsRunning)
+                TasksContainer.Instance.Start();
             RefreshToolButton();
         }
 
         private void btnStep_Click(object sender, EventArgs e)
         {
-            TasksContainer.Instance().StepRun();
+            TasksContainer.Instance.StepRun();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (TasksContainer.Instance().IsRunning)
-                TasksContainer.Instance().Stop();
+            if (TasksContainer.Instance.IsRunning)
+                TasksContainer.Instance.Stop();
             RefreshToolButton();
         }
 
         private void cbMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!TasksContainer.Instance().IsRunning)
+            if (!TasksContainer.Instance.IsRunning)
             {
                 switch (cbMode.SelectedItem.ToString())
                 {
                     case "实时模式":
-                        TasksContainer.Instance().Mode = DataMode.RealTime;
+                        TasksContainer.Instance.Mode = DataMode.RealTime;
                         break;
                     case "历史模式":
-                        TasksContainer.Instance().Mode = DataMode.History;
+                        TasksContainer.Instance.Mode = DataMode.History;
                         break;
                     case "调试模式":
-                        TasksContainer.Instance().Mode = DataMode.Debug;
+                        TasksContainer.Instance.Mode = DataMode.Debug;
                         break;
                 }
             }
@@ -121,9 +121,9 @@ namespace UnitMonitorServer
 
         private void cbPeriod_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!TasksContainer.Instance().IsRunning)
+            if (!TasksContainer.Instance.IsRunning)
             {
-                TasksContainer.Instance().Period = Convert.ToInt32(cbPeriod.SelectedItem);
+                TasksContainer.Instance.Period = Convert.ToInt32(cbPeriod.SelectedItem);
             }
         }
 
@@ -141,7 +141,7 @@ namespace UnitMonitorServer
                 toolStopSelectedTask.Enabled = false;
             }
 
-            //if (TasksContainer.Instance().IsRunning && (TasksContainer.Instance().Mode == DataMode.Debug) && (dgvTasks.SelectedRows.Count>0))
+            //if (TasksContainer.Instance.IsRunning && (TasksContainer.Instance.Mode == DataMode.Debug) && (dgvTasks.SelectedRows.Count>0))
             //    toolDebugData.Enabled = true;
             //else
             //    toolDebugData.Enabled = false;
@@ -151,7 +151,7 @@ namespace UnitMonitorServer
         {
             if (dgvTasks.SelectedRows.Count > 0)
             {
-                TaskBase task = TasksContainer.Instance()[dgvTasks.SelectedRows[0].Index];
+                TaskBase task = TasksContainer.Instance[dgvTasks.SelectedRows[0].Index];
                 if(task!=null)
                 {
                     DebugDataForm form = new DebugDataForm(task);
@@ -202,7 +202,7 @@ namespace UnitMonitorServer
                     itemNode.SelectedImageIndex = 2;
                     itemNode.Tag = item;
                     string taskName = item.Name.Replace(".config", "");
-                    if (TasksContainer.Instance().FindTask(taskName) != null)
+                    if (TasksContainer.Instance.FindTask(taskName) != null)
                         itemNode.Checked = true;
                 }
 
@@ -251,10 +251,10 @@ namespace UnitMonitorServer
                 {
                     FileInfo inf= (FileInfo)node.Tag;
                     string taskName = inf.Name.Replace(".config", "");
-                    if (TasksContainer.Instance().FindTask(taskName) == null)
+                    if (TasksContainer.Instance.FindTask(taskName) == null)
                     {
                         TaskBase task = TasksContainer.LoadTask(inf);
-                        TasksContainer.Instance().AddTask(task);
+                        TasksContainer.Instance.AddTask(task);
 
                     }
 
@@ -268,7 +268,7 @@ namespace UnitMonitorServer
         {
           while(  dgvTasks.SelectedRows.Count>0)
             {
-                TasksContainer.Instance().RemoveAt(dgvTasks.SelectedRows[0].Index);
+                TasksContainer.Instance.RemoveAt(dgvTasks.SelectedRows[0].Index);
             }
         }
     }

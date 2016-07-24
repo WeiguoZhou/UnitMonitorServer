@@ -76,18 +76,23 @@ namespace UnitMonitorServer
 
         public void TryLink()
         {
-            string ip = ServerCommunication.Instance().Ip;
-            int port = ServerCommunication.Instance().Port;
-            bool isLinked = true;
+            string ip = ServerCommunication.Ip;
+            int port = ServerCommunication.Port;
             if (this.IsOnline)
             {
                 try
                 {
-                    RegServer(ip, port);
+                    this.IsOnline = RegServer(ip, port);
                 }
                 catch
                 {
-                    isLinked = false;
+                    
+                }
+                if (!this.IsOnline)
+                {
+                    if (this.Offline != null)
+                        this.Offline(this, null);
+                    
                 }
             }
             else
@@ -102,37 +107,32 @@ namespace UnitMonitorServer
                         cf.Endpoint.Binding.OpenTimeout = TimeSpan.FromSeconds(5);
                         cf.Endpoint.Binding.SendTimeout = TimeSpan.FromSeconds(5);
                         cf.Faulted += OnClientFaulted;
-                        if (RegServer(ip, port))
+                        this.IsOnline = RegServer(ip, port);
+                        if (this.IsOnline)
                         {
-                         
-                            this.IsOnline = true;
+                                                 
                             if (this.Online != null)
                                 this.Online(this, null);
                         }
-                        else
-                            isLinked = false;
+                        
                     }
                     catch
                     {
-                        isLinked = false;
+                       
 
                     }
                 }
 
             }
-            if (!isLinked)
+            if (!this.IsOnline)
             {
                 cf = null;
-                if (this.IsOnline)
-                {
-                    this.IsOnline = false;
-                    if (this.Offline != null)
-                        this.Offline(this, null);
-                }
+                this.OnlineTime = DateTime.MinValue;
+                SendMessageCount = 0;
             }
+            else
+                this.OnlineTime = DateTime.Now;
 
-           
-                           
         }
 
         private void OnClientFaulted(object sender, EventArgs e)
@@ -208,7 +208,7 @@ namespace UnitMonitorServer
                 catch (Exception ex)
                 {
                     TurnOffLine();
-                    Logger.Instance().LogDebug(ex.Message);
+                    Logger.Instance.LogDebug(ex.Message);
                 }
             }
 

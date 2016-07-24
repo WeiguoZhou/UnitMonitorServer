@@ -210,7 +210,7 @@ namespace UnitMonitorCommon
             if (value.IsOn())
             {
                 string beginTimeKey = preKey + "_BeginTime";
-                DateTime currentTime = TasksContainer.Instance().CurrentTime;
+                DateTime currentTime = TasksContainer.Instance.CurrentTime;
                 if (!task.TempValue.ContainsKey(beginTimeKey))
                     task.TempValue.Add(beginTimeKey, currentTime);
                 DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
@@ -233,7 +233,7 @@ namespace UnitMonitorCommon
             if (value.IsOff())
             {
                 string beginTimeKey = preKey + "_BeginTime";
-                DateTime currentTime = TasksContainer.Instance().CurrentTime;
+                DateTime currentTime = TasksContainer.Instance.CurrentTime;
                 if (!task.TempValue.ContainsKey(beginTimeKey))
                     task.TempValue.Add(beginTimeKey, currentTime);
                 DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];

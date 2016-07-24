@@ -29,11 +29,18 @@ namespace UnitMonitorCommon
                 SendMessageEvent(inf);
         }
         private MessageCenter() { }
-        public static MessageCenter Instance()
+        public static MessageCenter Instance
+        {
+            get
+            {
+               return messageCenter;
+            }
+
+        }
+        public static void Init()
         {
             if (messageCenter == null)
                 messageCenter = new MessageCenter();
-            return messageCenter;
         }
         /// <summary>
         /// 将MessageType 转换为文字表达形式

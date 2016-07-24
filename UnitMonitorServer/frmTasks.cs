@@ -61,7 +61,7 @@ namespace UnitMonitorServer
                     itemNode.SelectedImageIndex = 2;
                     itemNode.Tag = item;
                     string taskName = item.Name.Replace(".config", "");
-                    if (TasksContainer.Instance().FindTask(taskName) != null)
+                    if (TasksContainer.Instance.FindTask(taskName) != null)
                         itemNode.Checked = true;
                 }
 
@@ -100,7 +100,7 @@ namespace UnitMonitorServer
         private void frmTasks_Load(object sender, EventArgs e)
         {
             PaintTreeView();
-            switch (TasksContainer.Instance().Mode)
+            switch (TasksContainer.Instance.Mode)
             {
                 case DataMode.RealTime:
                     toolDataMode.SelectedItem = "实时模式";

@@ -42,6 +42,13 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steam.cs" />
+    <Compile Include="VacuumSystem.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UnitMonitorCommon\UnitMonitorCommon.csproj">
+      <Project>{3565c829-7d1b-4165-9c14-dc86c79946ff}</Project>
+      <Name>UnitMonitorCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,7 +20,7 @@ namespace UnitMonitorServer
 
         public bool RegService(string ip,string port)
         {
-          return   Clients.Instance().RegClient(ip, Convert.ToInt32(port));
+          return   Clients.Instance.RegClient(ip, Convert.ToInt32(port));
         }
         //服务器端服务的名称
 
@@ -32,11 +32,11 @@ namespace UnitMonitorServer
 
         public bool ServiceShutOff(string ip)
         {
-           ClientInfo inf= Clients.Instance().FindClient(ip);
+           ClientInfo inf= Clients.Instance.FindClient(ip);
             if (inf != null)
             {
                 inf.TurnOffLine();
-                Clients.Instance().Remove(inf);
+                Clients.Instance.Remove(inf);
 
             }
             return true;
@@ -65,8 +65,8 @@ namespace UnitMonitorServer
 
                         inf.Path = dir.FullName.Replace(rootPath, "");
                         TaskBase task = null;
-                        if (TasksContainer.Instance().IsRunning)
-                            task= TasksContainer.Instance().FindTask(inf.Name);
+                        if (TasksContainer.Instance.IsRunning)
+                            task= TasksContainer.Instance.FindTask(inf.Name);
                         if (task == null)
                             task = TasksContainer.LoadTask(item);
 

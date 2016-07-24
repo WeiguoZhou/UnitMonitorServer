@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using UnitMonitorCommon;
 namespace UnitMonitorServer
 {
     static class Program
@@ -16,6 +16,12 @@ namespace UnitMonitorServer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            MessageCenter.Init();
+            TasksContainer.Init();
+            Logger.Init();
+            Clients.Init();
+            ServerCommunication.Init();
+  
             Application.Run(new MDIMain());
         }
     }

@@ -12,18 +12,27 @@ namespace UnitMonitorCommon
 {
   public  class Logger
     {
-        private static Logger logger;
+        private static Logger instance;
         AutoResetEvent areDebugWriting = new AutoResetEvent(true);
         AutoResetEvent areMessageWriting = new AutoResetEvent(true);
         private Logger() { }
 
-        public static Logger Instance()
+        public static Logger Instance
         {
-            if (logger == null)
+            get
             {
-                logger = new Logger();
+                return instance;
             }
-            return logger;
+
+        }
+        public static void Init()
+        {
+            if (instance == null)
+            {
+                instance = new Logger();
+                MessageCenter.Init();
+                MessageCenter.Instance.SendMessageEvent += instance.LogMessage;
+            }
         }
         /// <summary>
         /// 记录发送的消息

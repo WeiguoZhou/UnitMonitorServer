@@ -20,7 +20,7 @@ namespace UnitMonitorServer
 
         private void ClientsForm_Load(object sender, EventArgs e)
         {
-            clientsBindingSource.DataSource = Clients.Instance();
+            clientsBindingSource.DataSource = Clients.Instance;
 
         }
 
@@ -74,7 +74,7 @@ namespace UnitMonitorServer
             {
                 string ip = e.Row.Cells[0].Value.ToString();
                 int port = int.Parse(e.Row.Cells[1].Value.ToString());              
-                Clients.Instance().RegClient(ip, port);
+                Clients.Instance.RegClient(ip, port);
                
 
             }
@@ -85,7 +85,7 @@ namespace UnitMonitorServer
         {
             if (dgvClients.SelectedRows.Count > 0)
             {
-                ClientInfo inf = Clients.Instance()[dgvClients.SelectedRows[0].Index];
+                ClientInfo inf = Clients.Instance[dgvClients.SelectedRows[0].Index];
                 if (inf != null)
                 {
                     toolDelClient.Enabled = true;
@@ -105,11 +105,11 @@ namespace UnitMonitorServer
             {
                 foreach (DataGridViewRow row in dgvClients.SelectedRows)
                 {
-                    ClientInfo inf = Clients.Instance()[row.Index];
+                    ClientInfo inf = Clients.Instance[row.Index];
                     if (inf != null)
                     {
-                        Clients.Instance().DelClient(inf.Ip);
-                        Clients.Instance().Remove(inf);
+                        Clients.Instance.DelClient(inf.Ip);
+                        Clients.Instance.Remove(inf);
                     }
                 }
 
@@ -122,7 +122,7 @@ namespace UnitMonitorServer
             {
                 foreach (DataGridViewRow row in dgvClients.SelectedRows)
                 {
-                    ClientInfo inf = Clients.Instance()[row.Index];
+                    ClientInfo inf = Clients.Instance[row.Index];
                     if (inf != null && !inf.IsOnline)
                     {
                         inf.TryLink();
@@ -143,7 +143,7 @@ namespace UnitMonitorServer
             {
                 foreach (DataGridViewRow row in dgvClients.SelectedRows)
                 {
-                    ClientInfo inf = Clients.Instance()[row.Index];
+                    ClientInfo inf = Clients.Instance[row.Index];
                     if (inf != null && !inf.IsOnline)
                     {
                         inf.TurnOffLine();

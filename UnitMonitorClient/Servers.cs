@@ -12,11 +12,18 @@ namespace UnitMonitorClient
     {
         public event EventHandler ServerChanged;
         private static Servers instance;
-        public static Servers Instance()
+        public static Servers Instance
+        {
+            get
+            {
+                return instance;
+            }
+
+        }
+        public static void Init()
         {
             if (instance == null)
                 instance = Servers.LoadServers();
-            return instance;
         }
         private Servers()
         {
@@ -148,7 +155,17 @@ namespace UnitMonitorClient
             }
 
         }
-
+        public void ClientShutOff()
+        {
+            string ip = ClientCommunication.Ip;
+            Task.Run(() =>
+            {
+                foreach (ServerInfo server in this)
+                {
+                    server.ClientShutOff(ip);
+                }
+            });
+        }
     }
  
 }
