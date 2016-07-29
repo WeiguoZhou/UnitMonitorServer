@@ -29,21 +29,27 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TasksForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.cbOnlineServers = new System.Windows.Forms.ToolStripComboBox();
+            this.cbAllTaskSelector = new System.Windows.Forms.ToolStripComboBox();
+            this.btnDataFilter = new System.Windows.Forms.ToolStripButton();
+            this.btnViewData = new System.Windows.Forms.ToolStripButton();
             this.dgvTasks = new System.Windows.Forms.DataGridView();
-            this.taskInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.订阅全部消息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.订阅InfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.取消订阅消息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.订阅WarnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.订阅DangerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.订阅InfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.取消订阅InfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.取消订阅AlarmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.取消订阅WarnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.取消订阅DangerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.取消订阅全部消息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.taskInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pathDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.moduleNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -59,9 +65,10 @@
             this.persistantSuccessDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.persistantFailDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.failCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTasks)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.taskInfoBindingSource)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.taskInfoBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -74,11 +81,57 @@
             // 
             // toolStrip1
             // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1,
+            this.cbOnlineServers,
+            this.cbAllTaskSelector,
+            this.btnDataFilter,
+            this.btnViewData});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(628, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(80, 22);
+            this.toolStripLabel1.Text = "选择服务器：";
+            // 
+            // cbOnlineServers
+            // 
+            this.cbOnlineServers.Name = "cbOnlineServers";
+            this.cbOnlineServers.Size = new System.Drawing.Size(121, 25);
+            // 
+            // cbAllTaskSelector
+            // 
+            this.cbAllTaskSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbAllTaskSelector.Items.AddRange(new object[] {
+            "显示全部任务",
+            "只显示运行任务"});
+            this.cbAllTaskSelector.Name = "cbAllTaskSelector";
+            this.cbAllTaskSelector.Size = new System.Drawing.Size(121, 25);
+            // 
+            // btnDataFilter
+            // 
+            this.btnDataFilter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDataFilter.Image = ((System.Drawing.Image)(resources.GetObject("btnDataFilter.Image")));
+            this.btnDataFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDataFilter.Name = "btnDataFilter";
+            this.btnDataFilter.Size = new System.Drawing.Size(23, 22);
+            this.btnDataFilter.Text = "筛选数据";
+            this.btnDataFilter.Click += new System.EventHandler(this.btnDataFilter_Click);
+            // 
+            // btnViewData
+            // 
+            this.btnViewData.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnViewData.Image = ((System.Drawing.Image)(resources.GetObject("btnViewData.Image")));
+            this.btnViewData.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnViewData.Name = "btnViewData";
+            this.btnViewData.Size = new System.Drawing.Size(23, 22);
+            this.btnViewData.Text = "显示内容";
+            this.btnViewData.Click += new System.EventHandler(this.btnViewData_Click);
             // 
             // dgvTasks
             // 
@@ -112,10 +165,6 @@
             this.dgvTasks.Size = new System.Drawing.Size(628, 333);
             this.dgvTasks.TabIndex = 2;
             // 
-            // taskInfoBindingSource
-            // 
-            this.taskInfoBindingSource.DataSource = typeof(UnitMonitorCommunication.TaskInfo);
-            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -138,6 +187,12 @@
             this.订阅全部消息ToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.订阅全部消息ToolStripMenuItem.Text = "订阅全部消息";
             // 
+            // 订阅InfoToolStripMenuItem
+            // 
+            this.订阅InfoToolStripMenuItem.Name = "订阅InfoToolStripMenuItem";
+            this.订阅InfoToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.订阅InfoToolStripMenuItem.Text = "订阅Info";
+            // 
             // 取消订阅消息ToolStripMenuItem
             // 
             this.取消订阅消息ToolStripMenuItem.Name = "取消订阅消息ToolStripMenuItem";
@@ -155,12 +210,6 @@
             this.订阅DangerToolStripMenuItem.Name = "订阅DangerToolStripMenuItem";
             this.订阅DangerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.订阅DangerToolStripMenuItem.Text = "订阅Danger";
-            // 
-            // 订阅InfoToolStripMenuItem
-            // 
-            this.订阅InfoToolStripMenuItem.Name = "订阅InfoToolStripMenuItem";
-            this.订阅InfoToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.订阅InfoToolStripMenuItem.Text = "订阅Info";
             // 
             // 取消订阅InfoToolStripMenuItem
             // 
@@ -191,6 +240,10 @@
             this.取消订阅全部消息ToolStripMenuItem.Name = "取消订阅全部消息ToolStripMenuItem";
             this.取消订阅全部消息ToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.取消订阅全部消息ToolStripMenuItem.Text = "取消订阅全部消息";
+            // 
+            // taskInfoBindingSource
+            // 
+            this.taskInfoBindingSource.DataSource = typeof(UnitMonitorCommunication.TaskInfo);
             // 
             // nameDataGridViewTextBoxColumn
             // 
@@ -233,8 +286,8 @@
             // 
             // lastRunTimeDataGridViewTextBoxColumn
             // 
-            this.lastRunTimeDataGridViewTextBoxColumn.DataPropertyName = "LastRunTime";
-            this.lastRunTimeDataGridViewTextBoxColumn.HeaderText = "上次运行时间";
+            this.lastRunTimeDataGridViewTextBoxColumn.DataPropertyName = "LastSuccessTime";
+            this.lastRunTimeDataGridViewTextBoxColumn.HeaderText = "上次运行成功时间";
             this.lastRunTimeDataGridViewTextBoxColumn.Name = "lastRunTimeDataGridViewTextBoxColumn";
             this.lastRunTimeDataGridViewTextBoxColumn.ReadOnly = true;
             // 
@@ -313,11 +366,13 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "TasksForm";
-            this.Text = "TasksForm";
+            this.Text = "任务列表";
             this.Load += new System.EventHandler(this.TasksForm_Load);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTasks)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.taskInfoBindingSource)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.taskInfoBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -334,6 +389,17 @@
         private System.Windows.Forms.ToolStripMenuItem 取消订阅消息ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 订阅WarnToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 订阅DangerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 订阅InfoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 取消订阅InfoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 取消订阅AlarmToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 取消订阅WarnToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 取消订阅DangerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 取消订阅全部消息ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripComboBox cbOnlineServers;
+        private System.Windows.Forms.ToolStripComboBox cbAllTaskSelector;
+        private System.Windows.Forms.ToolStripButton btnDataFilter;
+        private System.Windows.Forms.ToolStripButton btnViewData;
         private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn pathDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn moduleNameDataGridViewTextBoxColumn;
@@ -349,11 +415,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn persistantSuccessDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn persistantFailDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn failCountDataGridViewTextBoxColumn;
-        private System.Windows.Forms.ToolStripMenuItem 订阅InfoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 取消订阅InfoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 取消订阅AlarmToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 取消订阅WarnToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 取消订阅DangerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 取消订阅全部消息ToolStripMenuItem;
     }
 }

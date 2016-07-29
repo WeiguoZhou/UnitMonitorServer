@@ -8,6 +8,7 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using UnitMonitorCommon;
 using System.Net;
+using System.IO;
 
 namespace UnitMonitorClient
 
@@ -198,8 +199,7 @@ namespace UnitMonitorClient
         }
         public void ClientShutOff(string ip)
         {
-            if (IsOnline)
-            {
+
                 try
                 {
 
@@ -209,8 +209,70 @@ namespace UnitMonitorClient
                 {
 
                 }
+
+        }
+        public string[] HistoryMessageFiles()
+        {
+            string[] historyMessageFiles = null;
+
+                try
+                {
+
+                    historyMessageFiles=cf.CreateChannel().HistoryMessageFiles();
+                }
+                catch
+                {
+
+                }
+
+            return historyMessageFiles;
+        }
+        public Stream HistoryMessage(string messageFile)
+        {
+            Stream stream = null;
+            try
+            {
+
+                stream = cf.CreateChannel().HistoryMessage(messageFile);
+            }
+            catch
+            {
+                
+
             }
 
+            return stream;
+        }
+
+        public List<TaskInfo> AllTasks()
+        {
+            List<TaskInfo> tasks=null;
+            try
+            {
+
+                tasks = cf.CreateChannel().AllTasks();
+            }
+            catch 
+            {
+        
+
+            }
+            return tasks;
+        }
+        public List<TaskInfo> RunningTasks()
+        {
+            List<TaskInfo> tasks = null;
+            try
+            {
+
+                tasks = cf.CreateChannel().RunningTasks();
+            }
+            catch
+            {
+
+
+            }
+            return tasks;
         }
     }
 

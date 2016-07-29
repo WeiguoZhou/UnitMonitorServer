@@ -34,15 +34,14 @@
             this.toolDel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolLink = new System.Windows.Forms.ToolStripMenuItem();
             this.toolCancelLink = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolTasks = new System.Windows.Forms.ToolStripMenuItem();
             this.dgvServers = new System.Windows.Forms.DataGridView();
-            this.serversBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ipDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.portDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsOnlineDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sendMessageCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.onlineTimeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.serversBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvServers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.serversBindingSource)).BeginInit();
@@ -54,46 +53,38 @@
             this.toolNew,
             this.toolDel,
             this.toolLink,
-            this.toolCancelLink,
-            this.toolTasks});
+            this.toolCancelLink});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(161, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 114);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // toolNew
             // 
             this.toolNew.Name = "toolNew";
-            this.toolNew.Size = new System.Drawing.Size(160, 22);
+            this.toolNew.Size = new System.Drawing.Size(152, 22);
             this.toolNew.Text = "添加";
             this.toolNew.Click += new System.EventHandler(this.toolNew_Click);
             // 
             // toolDel
             // 
             this.toolDel.Name = "toolDel";
-            this.toolDel.Size = new System.Drawing.Size(160, 22);
+            this.toolDel.Size = new System.Drawing.Size(152, 22);
             this.toolDel.Text = "删除";
             this.toolDel.Click += new System.EventHandler(this.toolDel_Click);
             // 
             // toolLink
             // 
             this.toolLink.Name = "toolLink";
-            this.toolLink.Size = new System.Drawing.Size(160, 22);
+            this.toolLink.Size = new System.Drawing.Size(152, 22);
             this.toolLink.Text = "连接";
             this.toolLink.Click += new System.EventHandler(this.toolLink_Click);
             // 
             // toolCancelLink
             // 
             this.toolCancelLink.Name = "toolCancelLink";
-            this.toolCancelLink.Size = new System.Drawing.Size(160, 22);
+            this.toolCancelLink.Size = new System.Drawing.Size(152, 22);
             this.toolCancelLink.Text = "取消连接";
             this.toolCancelLink.Click += new System.EventHandler(this.toolCancelLink_Click);
-            // 
-            // toolTasks
-            // 
-            this.toolTasks.Name = "toolTasks";
-            this.toolTasks.Size = new System.Drawing.Size(160, 22);
-            this.toolTasks.Text = "任务及消息订阅";
-            this.toolTasks.Click += new System.EventHandler(this.toolTasks_Click);
             // 
             // dgvServers
             // 
@@ -115,10 +106,6 @@
             this.dgvServers.RowTemplate.Height = 23;
             this.dgvServers.Size = new System.Drawing.Size(523, 313);
             this.dgvServers.TabIndex = 1;
-            // 
-            // serversBindingSource
-            // 
-            this.serversBindingSource.DataSource = typeof(UnitMonitorClient.Servers);
             // 
             // nameDataGridViewTextBoxColumn
             // 
@@ -166,6 +153,10 @@
             this.onlineTimeDataGridViewTextBoxColumn.Name = "onlineTimeDataGridViewTextBoxColumn";
             this.onlineTimeDataGridViewTextBoxColumn.ReadOnly = true;
             // 
+            // serversBindingSource
+            // 
+            this.serversBindingSource.DataSource = typeof(UnitMonitorClient.Servers);
+            // 
             // ServersForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -191,7 +182,6 @@
        
         private System.Windows.Forms.BindingSource serversBindingSource;
         private System.Windows.Forms.ToolStripMenuItem toolCancelLink;
-        private System.Windows.Forms.ToolStripMenuItem toolTasks;
         private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn ipDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn portDataGridViewTextBoxColumn;

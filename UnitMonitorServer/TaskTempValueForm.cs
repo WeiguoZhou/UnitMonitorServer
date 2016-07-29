@@ -24,9 +24,9 @@ namespace UnitMonitorServer
         private void TaskTempValueForm_Load(object sender, EventArgs e)
         {
             FreshData();
-            _task.RunComplete += AfterTaskProcessHander;
+            _task.RunComplete += AfterTaskRunCompleteHander;
         }
-        private  void AfterTaskProcessHander(TaskBase task)
+        private  void AfterTaskRunCompleteHander(object sender,EventArgs e)
         {
             if (dgvTempValues.InvokeRequired)
                 dgvTempValues.Invoke(new UpdatetData(FreshData));

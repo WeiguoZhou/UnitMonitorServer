@@ -42,11 +42,6 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStartSelectedTask = new System.Windows.Forms.ToolStripButton();
             this.dgvTasks = new System.Windows.Forms.DataGridView();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolDebugData = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStopSelectedTask = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.treeView1 = new System.Windows.Forms.TreeView();
             this.taskNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taskPathDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.runCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -57,17 +52,23 @@
             this.persistantSuccessDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.persistantFailDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.failCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolDebugData = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStopSelectedTask = new System.Windows.Forms.ToolStripMenuItem();
             this.tasksContainerBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusTasksContainer = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnHistorySetting = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTasks)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tasksContainerBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tasksContainerBindingSource)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,7 +91,8 @@
             this.toolStripLabel2,
             this.cbPeriod,
             this.toolStripSeparator1,
-            this.toolStartSelectedTask});
+            this.toolStartSelectedTask,
+            this.btnHistorySetting});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(722, 25);
@@ -211,56 +213,6 @@
             this.dgvTasks.TabIndex = 2;
             this.dgvTasks.VirtualMode = true;
             // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolDebugData,
-            this.toolStopSelectedTask});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(125, 48);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
-            // 
-            // toolDebugData
-            // 
-            this.toolDebugData.Name = "toolDebugData";
-            this.toolDebugData.Size = new System.Drawing.Size(124, 22);
-            this.toolDebugData.Text = "调试数据";
-            this.toolDebugData.Click += new System.EventHandler(this.toolDebugData_Click);
-            // 
-            // toolStopSelectedTask
-            // 
-            this.toolStopSelectedTask.Name = "toolStopSelectedTask";
-            this.toolStopSelectedTask.Size = new System.Drawing.Size(124, 22);
-            this.toolStopSelectedTask.Text = "停止运行";
-            this.toolStopSelectedTask.Click += new System.EventHandler(this.toolStopSelectedTask_Click);
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 49);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeView1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.dgvTasks);
-            this.splitContainer1.Size = new System.Drawing.Size(722, 338);
-            this.splitContainer1.SplitterDistance = 240;
-            this.splitContainer1.TabIndex = 3;
-            // 
-            // treeView1
-            // 
-            this.treeView1.CheckBoxes = true;
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(240, 338);
-            this.treeView1.TabIndex = 0;
-            this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.node_AfterCheck);
-            // 
             // taskNameDataGridViewTextBoxColumn
             // 
             this.taskNameDataGridViewTextBoxColumn.DataPropertyName = "TaskName";
@@ -342,9 +294,59 @@
             this.failCountDataGridViewTextBoxColumn.ReadOnly = true;
             this.failCountDataGridViewTextBoxColumn.Width = 80;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolDebugData,
+            this.toolStopSelectedTask});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(125, 48);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            // 
+            // toolDebugData
+            // 
+            this.toolDebugData.Name = "toolDebugData";
+            this.toolDebugData.Size = new System.Drawing.Size(124, 22);
+            this.toolDebugData.Text = "调试数据";
+            this.toolDebugData.Click += new System.EventHandler(this.toolDebugData_Click);
+            // 
+            // toolStopSelectedTask
+            // 
+            this.toolStopSelectedTask.Name = "toolStopSelectedTask";
+            this.toolStopSelectedTask.Size = new System.Drawing.Size(124, 22);
+            this.toolStopSelectedTask.Text = "停止运行";
+            this.toolStopSelectedTask.Click += new System.EventHandler(this.toolStopSelectedTask_Click);
+            // 
             // tasksContainerBindingSource
             // 
             this.tasksContainerBindingSource.DataSource = typeof(UnitMonitorCommon.TasksContainer);
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 49);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.treeView1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.dgvTasks);
+            this.splitContainer1.Size = new System.Drawing.Size(722, 338);
+            this.splitContainer1.SplitterDistance = 240;
+            this.splitContainer1.TabIndex = 3;
+            // 
+            // treeView1
+            // 
+            this.treeView1.CheckBoxes = true;
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(240, 338);
+            this.treeView1.TabIndex = 0;
+            this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.node_AfterCheck);
             // 
             // statusStrip1
             // 
@@ -361,6 +363,15 @@
             this.StatusTasksContainer.Name = "StatusTasksContainer";
             this.StatusTasksContainer.Size = new System.Drawing.Size(44, 17);
             this.StatusTasksContainer.Text = "状态：";
+            // 
+            // btnHistorySetting
+            // 
+            this.btnHistorySetting.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnHistorySetting.Image = ((System.Drawing.Image)(resources.GetObject("btnHistorySetting.Image")));
+            this.btnHistorySetting.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnHistorySetting.Name = "btnHistorySetting";
+            this.btnHistorySetting.Size = new System.Drawing.Size(23, 22);
+            this.btnHistorySetting.Text = "历史模式时间设定";
             // 
             // TaskContainerForm
             // 
@@ -379,11 +390,11 @@
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTasks)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tasksContainerBindingSource)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tasksContainerBindingSource)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -423,5 +434,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn failCountDataGridViewTextBoxColumn;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel StatusTasksContainer;
+        private System.Windows.Forms.ToolStripButton btnHistorySetting;
     }
 }

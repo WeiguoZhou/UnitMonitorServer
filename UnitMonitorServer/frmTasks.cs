@@ -60,8 +60,8 @@ namespace UnitMonitorServer
                    TreeNode itemNode= treeNode.Nodes.Add(item.Name);
                     itemNode.SelectedImageIndex = 2;
                     itemNode.Tag = item;
-                    string taskName = item.Name.Replace(".config", "");
-                    if (TasksContainer.Instance.FindTask(taskName) != null)
+                   
+                    if (TasksContainer.Instance.FindTask(item.FullName) != null)
                         itemNode.Checked = true;
                 }
 

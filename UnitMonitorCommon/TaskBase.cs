@@ -9,27 +9,26 @@ using UnitMonitorCommunication;
 
 namespace UnitMonitorCommon
 {
-    public  class TaskBase
+    public class TaskBase
     {
         XmlDocument config;
-        XmlDocument sharedConfig;
         private Dictionary<string, Queue<double>> historyValues;
         public string TaskName { set; get; }
         public FileInfo ConfigFileInfo { set; get; }
-        public List<Point>  Points {set;get;}
-        public Dictionary<string, bool> Depend { set; get; }
+        public List<Point> Points { set; get; }
 
         public Dictionary<string, object> TempValue { set; get; }
-        public event TaskEventHandler TaskAdded;
-        public event TaskEventHandler AfterPreInit;
-        public event TaskEventHandler AfterInitData;
-         public event TaskEventHandler AfterProcess;
-        public event TaskErrEventHandler AfterTaskErr;
-        public event TaskEventHandler RunComplete;
-        public DateTime LastRunTime { set; get; }
+        public event EventHandler TaskAdded;
+        public event EventHandler AfterPreInit;
+        public event EventHandler AfterInitData;
+        public event EventHandler AfterProcess;
+        public event ExceptionEventHandler AfterTaskErr;
+        public event EventHandler RunComplete;
+        public DateTime LastSuccessTime { set; get; }
 
         public XmlDocument Config
-        { set
+        {
+            set
             {
                 config = value;
                 foreach (XmlNode item in config.GetElementsByTagName("point"))
@@ -37,7 +36,10 @@ namespace UnitMonitorCommon
                     Point point = new Point();
                     point.Alias = item.Attributes["name"].Value;
                     point.Id = item.Attributes["id"].Value;
-                    point.Used = true;
+                    if (item.Attributes["used"] != null)
+                        point.Used = Convert.ToBoolean(item.Attributes["used"]);
+                    else
+                        point.Used = true;
                     Points.Add(point);
                 }
             }
@@ -49,29 +51,15 @@ namespace UnitMonitorCommon
             }
         }
         //任务模块共享的配置
-        public XmlDocument SharedConfig {
-            set
-            {
-                sharedConfig = value;
-                 foreach (XmlNode item in config.GetElementsByTagName("depend"))
-                 {
-                        Depend.Add(item.Attributes["name"].Value, Convert.ToBoolean(item.Attributes["value"].Value));
-                 }
-             }
+        public XmlDocument SharedConfig { set; get; }
 
-        get
-
-            {
-                return sharedConfig;
-            }
-
-            }
         public DateTime BeginTime { set; get; }
         public string TaskPath
         {
             get
             {
-                return ConfigFileInfo.FullName.Replace(Environment.CurrentDirectory, "").Replace(".config", "");
+
+                return ConfigFileInfo.FullName.Replace(Directory.GetCurrentDirectory(), "").Replace(TaskName + ".config", "");
             }
         }
 
@@ -80,13 +68,13 @@ namespace UnitMonitorCommon
         {
             get
             {
-                return TasksContainer.Instance.Contains(this);
+                return TasksContainer.Instance.IsRunning && TasksContainer.Instance.Contains(this);
             }
         }
 
         public int Period
         {
- 
+
             get
             {
                 return IntSetting("period");
@@ -117,12 +105,17 @@ namespace UnitMonitorCommon
         /// </summary>
 
         public int FailCount { private set; get; }
-
+        public bool RunRequired
+        {
+            get
+            {
+                return TasksContainer.Instance.RunCount % (Period / TasksContainer.Instance.Period) == 0;
+            }
+        }
         public TaskBase()
         {
             Points = new List<Point>();
             historyValues = new Dictionary<string, Queue<double>>();
-            Depend = new Dictionary<string, bool>();
             TempValue = new Dictionary<string, object>();
         }
         /// <summary>
@@ -131,33 +124,25 @@ namespace UnitMonitorCommon
         protected virtual void Process() { }
         public void Run()
         {
-            if (TasksContainer.Instance.RunCount % (Period/ TasksContainer.Instance.Period) != 0)
+            if (TasksContainer.Instance.RunCount % (Period / TasksContainer.Instance.Period) != 0)
                 return;
-            DateTime beginTime = DateTime.Now;
+            DateTime RunBeginTime = DateTime.Now;
             try
             {
-                PreInit();
-                if (AfterPreInit != null)
-                    AfterPreInit(this);
                 InitData();
                 if (AfterInitData != null)
-                    AfterInitData(this);
+                    AfterInitData(this,null);
                 Process();
                 if (AfterProcess != null)
-                    AfterProcess(this);
+                    AfterProcess(this,null);
                 RunCount += 1;
                 LastSuccess = true;
+                LastSuccessTime = TasksContainer.Instance.CurrentTime;
             }
             catch (Exception ex)
             {
                 LastSuccess = false;
-                //记录出错信息
-                string message = string.Format("任务执行出错：任务模块:{0}，出错信息:{1}", this.TaskName, ex.Message);
-                Logger.Instance.LogDebug(message);
-                if (AfterTaskErr != null)
-                    AfterTaskErr(this, ex);
-
-
+                TasksContainer.Instance.RaiseTaskExecuteErr(this, ex);
             }
 
             if (LastSuccess)
@@ -172,19 +157,27 @@ namespace UnitMonitorCommon
                 PersistantFail += 1;
                 FailCount += 1;
             }
-            LastSpendTime = CommUtil.TimeMillisecondSpan(beginTime,DateTime.Now);
+            LastSpendTime = CommUtil.TimeMillisecondSpan(RunBeginTime, DateTime.Now);
             if (RunComplete != null)
-                RunComplete(this);
+                RunComplete(this,null);
         }
 
-        protected virtual  void PreInit()
+        internal void InternalPreRun()
         {
-            //在这里可以主要做一些变更
+            PreRun();
+            if (AfterPreInit != null)
+                AfterPreInit(this, null);
         }
+
+        protected virtual void PreRun()
+        {
+            
+        }
+
         public void RaiseTaskAdded()
         {
             if (TaskAdded != null)
-                TaskAdded(this);
+                TaskAdded(this,null);
             this.RunComplete += TasksContainer.Instance.OnTaskChanged;
         }
         private List<string> GetUsedPoints()
@@ -202,12 +195,12 @@ namespace UnitMonitorCommon
         /// </summary>
         public virtual void InitData()
         {
-            List<string> usedPoints = GetUsedPoints();
-           
+
+
             if (TasksContainer.Instance.Mode == DataMode.RealTime)
-                InitRealData(usedPoints);
+                InitRealData();
             if (TasksContainer.Instance.Mode == DataMode.History)
-                InitHistoryData(usedPoints);
+                InitHistoryData();
 
         }
         public Point FindPointById(string id)
@@ -219,7 +212,7 @@ namespace UnitMonitorCommon
             }
             return null;
         }
-        public Point FindPointByAlais(string alias )
+        public Point FindPointByAlais(string alias)
         {
             foreach (Point item in Points)
             {
@@ -228,61 +221,59 @@ namespace UnitMonitorCommon
             }
             return null;
         }
-        private void InitRealData(List<string> usedPoints)
+        private void InitRealData()
         {
-            int count = usedPoints.Count;
-           if (count > 0)
+
+
+            foreach (var item in this.Points)
             {
-                double[] values = Dna.GetRtValue(usedPoints);
-                for (int i = 0; i < count; i++)
+                if (item.Used)
                 {
-                    Point point = FindPointById(usedPoints[i]);
-                    if(point!=null)
-                    {
-                        point.Value = values[i];
-                    }
+                    int index = TasksContainer.Instance.Points.BinarySearch(item.Id);
+                    if (index > 0)
+                        item.Value = TasksContainer.Instance.Values[index];
                 }
 
             }
 
-        }
-        public void SetPointData(string id,double value)
-        {
-            Point point = FindPointById(id);
-            if (point == null)
-                throw new Exception(string.Format("在点表中未找到点id为{0}的点", id));
-            point.Value = value;
+
 
         }
-        public  void InitHistoryData(List<string> usedPoints)
-        {
-            foreach (string item in usedPoints)
-            {
-                LoadHistoryData(item);
-            }
-        }
-        private void LoadHistoryData(string id)
+        public void SetPointData(string id, double value)
         {
             Point point = FindPointById(id);
-            if (point == null)
-                return;
-            if (historyValues.ContainsKey(id))
+            if (point != null)               
+                point.Value = value;
+
+        }
+        public void InitHistoryData()
+        {
+            foreach (var item in Points)
             {
-                Queue<double> values = historyValues[id];
-                if ((values != null) && (values.Count > 0))
-                    point.Value = values.Dequeue();
-                else
+                if (item.Used)
                 {
-                    values = Dna.DNAGetHistValue(id, TasksContainer.Instance.CurrentTime, Period);
-                    historyValues[id] = values;
-                    point.Value = values.Dequeue();
+                    LoadHistoryData(item);
                 }
             }
+
+        }
+        private void LoadHistoryData(Point point)
+        {
+            if (!historyValues.ContainsKey(point.Id))
+                historyValues.Add(point.Id, null);
+            Queue<double> values = historyValues[point.Id];
+            if ((values == null) || (values.Count == 0))
+            {
+                values = Dna.DNAGetHistValue(point.Id, TasksContainer.Instance.CurrentTime, Period);
+                historyValues[point.Id] = values;
+
+            }
+            if ((values != null) && (values.Count > 0))
+                point.Value = values.Dequeue();
             else
-            {
-                historyValues.Add(id ,null);
-                LoadHistoryData(id);
-            }
+                throw new Exception(string.Format("{0}在读取历史数据时数据不存在", this.TaskName));
+
+
         }
 
 
@@ -319,15 +310,15 @@ namespace UnitMonitorCommon
 
             return Convert.ToBoolean(AnalogValue(alias));
         }
- 
+
         /// <summary>
         /// 读取配置值（字符串）
         /// </summary>
         /// <param name="settingname">配置名称</param>
         /// <returns>配置值（字符串）</returns>
-        private string SettingValue(string settingname, XmlDocument configDoc,string path= "/configuration/params/param")
+        private string SettingValue(string settingname, XmlDocument configDoc, string path = "/configuration/params/param")
         {
-            string xmlPath= path+string.Format("[@name='{0}']", settingname);
+            string xmlPath = path + string.Format("[@name='{0}']", settingname);
             XmlNode node = configDoc.SelectSingleNode(xmlPath);
             if ((node != null) && (node.Attributes["value"] != null))
                 return node.Attributes["value"].Value;
@@ -380,8 +371,8 @@ namespace UnitMonitorCommon
         }
         public bool FunSetting(string settingname)
         {
-            
-               XmlNode node = Config.SelectSingleNode(string.Format("/configuration/funs/fun[@name='{0}']", settingname));
+
+            XmlNode node = Config.SelectSingleNode(string.Format("/configuration/funs/fun[@name='{0}']", settingname));
             if ((node != null) && (node.Attributes["value"] != null))
                 return Convert.ToBoolean(node.Attributes["value"].Value);
             return false;
@@ -402,7 +393,7 @@ namespace UnitMonitorCommon
                 point.Used = false;
                 RemoveRelatedKey(alias);
             }
-                
+
         }
 
         /// <summary>
@@ -431,19 +422,39 @@ namespace UnitMonitorCommon
                     this.TempValue.Remove(key);
                 }
             }
+
         }
+        public TaskInfo ToTaskInfo()
+        {
+            TaskInfo inf = new TaskInfo();
+            inf.BeginTime = this.BeginTime;
+            inf.FailCount = this.FailCount;
+            inf.IsRunning = this.IsRunning;
+            inf.LastSuccessTime = this.LastSuccessTime;
+            inf.LastSpendTime = this.LastSpendTime;
+            inf.LastSuccess = this.LastSuccess;
+            inf.ModuleName = this.GetType().Name;
+            inf.Name = this.TaskName;
+            inf.Path = this.TaskPath;
+            inf.Period = this.Period;
+            inf.PersistantFail = this.PersistantFail;
+            inf.PersistantSuccess = this.PersistantSuccess;
+            inf.RunCount = this.RunCount;
+            inf.SuccessCount = this.SuccessCount;
+            return inf;
+        }
+
     }
     public class Point
     {
         public string Alias { set; get; }
-        public  string Id { set; get; }
+        public string Id { set; get; }
         public double Value { set; get; }
         public bool Used { set; get; }
 
     }
 
-    public delegate void TaskEventHandler(TaskBase task);
-    public delegate void TaskErrEventHandler(TaskBase task, Exception ex);
 
-    }
+
+}
 

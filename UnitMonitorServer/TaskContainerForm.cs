@@ -13,7 +13,7 @@ namespace UnitMonitorServer
 {
     public partial class TaskContainerForm : Form
     {
-        private  delegate void UpdatetData();
+        private delegate void UpdatetData();
         public TaskContainerForm()
         {
             InitializeComponent();
@@ -25,6 +25,8 @@ namespace UnitMonitorServer
             tasksContainerBindingSource.DataSource = TasksContainer.Instance;
             PaintTreeView();
             RefreshToolButton();
+            TasksContainer.Instance.StopRun += OnTaskContainerStateChanged;
+            TasksContainer.Instance.BeginRun += OnTaskContainerStateChanged;
             _UpdateStatus();
             TasksContainer.Instance.RunComplete += UpdateStatus;
 
@@ -41,10 +43,16 @@ namespace UnitMonitorServer
         }
         private void _UpdateStatus()
         {
-          
+
             StatusTasksContainer.Text = string.Format("状态：运行次数{0}，上次花费时间{1}毫秒", TasksContainer.Instance.RunCount, TasksContainer.Instance.LastSpendTime);
         }
-
+        private void OnTaskContainerStateChanged(object sender,EventArgs e)
+        {
+            if (this.InvokeRequired)
+                this.Invoke(new UpdatetData(RefreshToolButton));
+            else
+                RefreshToolButton();
+        }
         private void RefreshToolButton()
         {
             TasksContainer instance = TasksContainer.Instance;
@@ -60,6 +68,7 @@ namespace UnitMonitorServer
                     cbMode.SelectedItem = "调试模式";
                     break;
             }
+
             cbPeriod.SelectedItem = TasksContainer.Instance.Period.ToString();
             if (instance.IsRunning)
             {
@@ -67,8 +76,10 @@ namespace UnitMonitorServer
                 btnStop.Enabled = true;
                 cbMode.Enabled = false;
                 cbPeriod.Enabled = false;
+                btnHistorySetting.Enabled = false;
                 if (instance.Mode == DataMode.Debug)
                     btnStep.Enabled = true;
+
             }
             else
             {
@@ -77,14 +88,26 @@ namespace UnitMonitorServer
                 btnStep.Enabled = false;
                 cbMode.Enabled = true;
                 cbPeriod.Enabled = true;
+                if (TasksContainer.Instance.Mode == DataMode.History)
+                    btnHistorySetting.Enabled = true;
+                else
+                    btnHistorySetting.Enabled = false;
             }
 
         }
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            if (!TasksContainer.Instance.IsRunning)
-                TasksContainer.Instance.Start();
+            if (TasksContainer.Instance.Mode == DataMode.History)
+            {
+                if ((TasksContainer.Instance.BeginTime == DateTime.MinValue) || (TasksContainer.Instance.HistoryEndTime == DateTime.MinValue))
+                {
+                    MessageBox.Show("必须先设定历史模式的开始时间和结束时间后才能再启动任务！");
+                    return;
+                }
+            }
+
+            TasksContainer.Instance.Start();
             RefreshToolButton();
         }
 
@@ -152,7 +175,7 @@ namespace UnitMonitorServer
             if (dgvTasks.SelectedRows.Count > 0)
             {
                 TaskBase task = TasksContainer.Instance[dgvTasks.SelectedRows[0].Index];
-                if(task!=null)
+                if (task != null)
                 {
                     DebugDataForm form = new DebugDataForm(task);
                     form.ShowDialog();
@@ -166,7 +189,7 @@ namespace UnitMonitorServer
         {
             treeView1.Nodes.Clear();
             TreeNode node = treeView1.Nodes.Add("全部");
-            string fullPath = Environment.CurrentDirectory + "\\" + "Tasks";
+            string fullPath = Directory.GetCurrentDirectory() + "\\" + "Tasks";
             if (!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
             if (GetMutiNode(node, fullPath))
@@ -201,8 +224,8 @@ namespace UnitMonitorServer
                     TreeNode itemNode = treeNode.Nodes.Add(item.Name);
                     itemNode.SelectedImageIndex = 2;
                     itemNode.Tag = item;
-                    string taskName = item.Name.Replace(".config", "");
-                    if (TasksContainer.Instance.FindTask(taskName) != null)
+                   
+                    if (TasksContainer.Instance.FindTask(item.FullName) != null)
                         itemNode.Checked = true;
                 }
 
@@ -240,18 +263,18 @@ namespace UnitMonitorServer
 
         private void toolStartSelectedTask_Click(object sender, EventArgs e)
         {
-            if(treeView1.Nodes.Count>0)
+            if (treeView1.Nodes.Count > 0)
                 StartCheckedNodes(treeView1.Nodes[0]);
         }
-              private void StartCheckedNodes(TreeNode treeNode)
+        private void StartCheckedNodes(TreeNode treeNode)
         {
             foreach (TreeNode node in treeNode.Nodes)
             {
-               if(node.Checked && node.Tag != null)
+                if (node.Checked && node.Tag != null)
                 {
-                    FileInfo inf= (FileInfo)node.Tag;
-                    string taskName = inf.Name.Replace(".config", "");
-                    if (TasksContainer.Instance.FindTask(taskName) == null)
+                    FileInfo inf = (FileInfo)node.Tag;
+                   
+                    if (TasksContainer.Instance.FindTask(inf.FullName) == null)
                     {
                         TaskBase task = TasksContainer.LoadTask(inf);
                         TasksContainer.Instance.AddTask(task);
@@ -266,7 +289,7 @@ namespace UnitMonitorServer
 
         private void toolStopSelectedTask_Click(object sender, EventArgs e)
         {
-          while(  dgvTasks.SelectedRows.Count>0)
+            while (dgvTasks.SelectedRows.Count > 0)
             {
                 TasksContainer.Instance.RemoveAt(dgvTasks.SelectedRows[0].Index);
             }

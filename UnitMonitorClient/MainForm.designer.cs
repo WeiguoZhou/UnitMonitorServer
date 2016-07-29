@@ -36,7 +36,7 @@
             this.退出ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.状态ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolLinkedServers = new System.Windows.Forms.ToolStripMenuItem();
-            this.历史消息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolHistoryMessages = new System.Windows.Forms.ToolStripMenuItem();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.消息订阅ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.客户端设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,6 +61,7 @@
             this.toolSetting = new System.Windows.Forms.ToolStripMenuItem();
             this.toolExit = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.toolTasks = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMessages)).BeginInit();
@@ -105,7 +106,8 @@
             // 
             this.状态ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolLinkedServers,
-            this.历史消息ToolStripMenuItem});
+            this.toolHistoryMessages,
+            this.toolTasks});
             this.状态ToolStripMenuItem.Name = "状态ToolStripMenuItem";
             this.状态ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.状态ToolStripMenuItem.Text = "视图";
@@ -113,15 +115,16 @@
             // toolLinkedServers
             // 
             this.toolLinkedServers.Name = "toolLinkedServers";
-            this.toolLinkedServers.Size = new System.Drawing.Size(136, 22);
+            this.toolLinkedServers.Size = new System.Drawing.Size(160, 22);
             this.toolLinkedServers.Text = "连接的服务";
             this.toolLinkedServers.Click += new System.EventHandler(this.toolLinkedServers_Click);
             // 
-            // 历史消息ToolStripMenuItem
+            // toolHistoryMessages
             // 
-            this.历史消息ToolStripMenuItem.Name = "历史消息ToolStripMenuItem";
-            this.历史消息ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-            this.历史消息ToolStripMenuItem.Text = "历史消息";
+            this.toolHistoryMessages.Name = "toolHistoryMessages";
+            this.toolHistoryMessages.Size = new System.Drawing.Size(160, 22);
+            this.toolHistoryMessages.Text = "历史消息";
+            this.toolHistoryMessages.Click += new System.EventHandler(this.toolHistoryMessages_Click);
             // 
             // 设置ToolStripMenuItem
             // 
@@ -308,6 +311,13 @@
             this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
+            // toolTasks
+            // 
+            this.toolTasks.Name = "toolTasks";
+            this.toolTasks.Size = new System.Drawing.Size(160, 22);
+            this.toolTasks.Text = "任务列表及订阅";
+            this.toolTasks.Click += new System.EventHandler(this.toolTasks_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -360,12 +370,13 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem toolClearMessages;
         private System.Windows.Forms.ToolStripMenuItem toolDelMessage;
-        private System.Windows.Forms.ToolStripMenuItem 历史消息ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolHistoryMessages;
         private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 消息订阅ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 客户端设置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolDelSelected;
         private System.Windows.Forms.ToolStripButton toolDelAll;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ToolStripMenuItem toolTasks;
     }
 }

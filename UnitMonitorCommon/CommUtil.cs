@@ -7,7 +7,11 @@ using System.Net;
 namespace UnitMonitorCommon
 {
    public  class CommUtil
-    {
+    {/// <summary>
+    /// 根据时间计算值次
+    /// </summary>
+    /// <param name="d"></param>
+    /// <returns></returns>
         public static string ZhiC(DateTime d)
 
         {
@@ -40,7 +44,11 @@ namespace UnitMonitorCommon
             }
             return zhc;
         }
-
+        /// <summary>
+        /// 根据时间计算班次
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
         public static string BanC(DateTime d)
         {
             if (d.Hour < 8)
@@ -59,7 +67,7 @@ namespace UnitMonitorCommon
         {
             if (instr == null) return "";
             return instr.Replace("&", "&amp;").Replace("<", "&lt;")
-                        .Replace(">", "&gt;").Replace("\"", "&quot;").Replace(",", "&dot;");
+                        .Replace(">", "&gt;").Replace("\"", "&quot;").Replace(",", "&comma;");
         }
         /// <summary>
         /// html转义字符串还原
@@ -70,7 +78,7 @@ namespace UnitMonitorCommon
         {
             if (instr == null) return "";
             return instr.Replace("&amp;", "&").Replace("&lt;", "<")
-                        .Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&dot;", ",");
+                        .Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&comma;", ",");
         }
         /// <summary>
         /// 返回两个时间间隔的秒数

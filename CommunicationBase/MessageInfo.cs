@@ -35,21 +35,21 @@ namespace UnitMonitorCommunication
             OccurTime = DateTime.Now;
         }
     }
-    [DataContract]
+    [DataContract][Flags]
     public enum MessageType
     {
         [EnumMember]
-        Info = 0,
+        System = 0x01,
         [EnumMember]
-        Alarm =1,
+        Info = 0x02,
         [EnumMember]
-        System =2,
+        Alarm = 0x04,
         [EnumMember]
-        Warn=4,
+        Warn= 0x08,
         [EnumMember]
-        Danger=8,
+        Danger= 0x16,
         [EnumMember]
-        Examination
+        Examination= 0x32
 
     }
 }

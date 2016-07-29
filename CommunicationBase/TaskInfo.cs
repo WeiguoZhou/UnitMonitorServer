@@ -18,7 +18,7 @@ namespace UnitMonitorCommunication
         [DataMember]
         public bool IsRunning { set; get; }
         [DataMember]
-        public DateTime LastRunTime { set; get; }
+        public DateTime LastSuccessTime { set; get; }
         [DataMember]
         public DateTime BeginTime { set; get; }
         [DataMember]

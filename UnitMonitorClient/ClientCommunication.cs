@@ -90,11 +90,10 @@ namespace UnitMonitorClient
             Uri baseAddress = new Uri(Url);
            
             svcHost = new WebServiceHost(typeof(ClientService), baseAddress);
-     
-            svcHost.Closing += RaiseServiceHostStateChanged;
-            svcHost.Closed += RaiseServiceHostStateChanged;
+            //如果在程序退出时引发stopService()，在主窗口时消息表格经常会出错，故关闭时不发消息。
+            //svcHost.Closed += RaiseServiceHostStateChanged;
             svcHost.Opened += RaiseServiceHostStateChanged;
-            svcHost.Opening += RaiseServiceHostStateChanged;
+           // svcHost.Opening += RaiseServiceHostStateChanged;
             svcHost.Faulted+= RaiseServiceHostStateChanged;
             svcHost.Open();
 
@@ -111,30 +110,27 @@ namespace UnitMonitorClient
             string message = "";
             switch (svcHost.State)
             {
-                case CommunicationState.Opening:
-                    message = "本地服务正在打开";
-                    break;
                 case CommunicationState.Opened:
                     message = "本地服务已打开";
                     RegClients();
                     break;
-                case CommunicationState.Closing:
-                    message = "本地服务正在关闭";
-                    break;
                 case CommunicationState.Closed:
-                    message = "本地服务已关闭";
                     break;
                 case CommunicationState.Faulted:
-                    message = "本地服务失败";
+                    message = "本地服务失败，请重新启动程序";
                     break;
 
             }
-            MessageInfo info = new MessageInfo();
-            info.SenderUrl = Url;
-            info.MessageType = MessageType.System;
-            info.Message = message;
-            info.TaskPath = "本地服务系统消息";
-            ClientMessageCenter.Instance.RaiseRecievedMessage(info);
+            if (message != "")
+            {
+                MessageInfo info = new MessageInfo();
+                info.SenderUrl = Url;
+                info.MessageType = MessageType.System;
+                info.Message = message;
+                info.TaskPath = "本地服务系统消息";
+                ClientMessageCenter.Instance.RaiseRecievedMessage(info);
+            }
+
         }
 
         private void RegClients()

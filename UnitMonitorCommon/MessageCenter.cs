@@ -10,6 +10,13 @@ namespace UnitMonitorCommon
 {
    public class MessageCenter
     {
+        public const string InfoMessageType = "消息";
+        public const string SysMessageType = "系统";
+        public const string AlarmMessageType = "报警";
+        public const string WarnMessageType = "警告";
+        public const string DangerMessageType = "危险";
+        public const string ExaminationMessageType = "考核";
+        public const string UnknownMessageType = "未知";
         private static MessageCenter messageCenter;
         string serverIp = "";
         public event MessageEventHandler SendMessageEvent;
@@ -40,7 +47,22 @@ namespace UnitMonitorCommon
         public static void Init()
         {
             if (messageCenter == null)
+            {
                 messageCenter = new MessageCenter();
+                TasksContainer.Init();
+                TasksContainer.Instance.BeginRun += messageCenter.OnTaskContainerRun;
+                TasksContainer.Instance.StopRun += messageCenter.OnTaskContainerStopRun;
+            }
+
+
+        }
+        private void OnTaskContainerStopRun(object sender,EventArgs e)
+        {
+            SendMessage(MessageType.System, "任务中心已停止运行", "System");
+        }
+        private void OnTaskContainerRun(object sender, EventArgs e)
+        {
+            SendMessage(MessageType.System, "任务中心已启动", "System");
         }
         /// <summary>
         /// 将MessageType 转换为文字表达形式
@@ -52,19 +74,19 @@ namespace UnitMonitorCommon
             switch (type)
             {
                 case MessageType.Info:
-                    return "消息";
+                    return InfoMessageType;
                 case MessageType.Alarm:
-                    return "报警";
+                    return AlarmMessageType;
                 case MessageType.Warn:
-                    return "警告";
+                    return WarnMessageType;
                 case MessageType.Danger:
-                    return "危险";
+                    return DangerMessageType;
                 case MessageType.Examination:
-                    return "考核";
+                    return ExaminationMessageType;
                 case MessageType.System:
-                    return "系统";
+                    return SysMessageType;
                 default:
-                    return "未知";
+                    return UnknownMessageType;
             }
         }
         public string ServerIp

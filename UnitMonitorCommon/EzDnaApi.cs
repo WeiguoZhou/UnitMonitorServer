@@ -23,11 +23,18 @@ namespace UnitMonitorCommon
        private  static extern int DnaGetHistSnap(string point, string szStart, string szEnd, string szPeriod, UInt32 key);
         [DllImport("EzDnaApi.dll", EntryPoint = "DnaGetNextHist", CharSet = CharSet.Auto)]
         private static extern int DnaGetNextHist(UInt32 key, double value, string curTime, UInt16 nTime, string status, UInt16 nStatus);
-        public static Queue<double>  DNAGetHistValue(string id,DateTime beginTime, Int32 period)
+        /// <summary>
+        /// 从edna中读取历史数据
+        /// </summary>
+        /// <param name="id">点地址</param>
+        /// <param name="beginTime">开始时</param>
+        /// <param name="period">取数周期</param>
+        /// <returns></returns>
+        public static Queue<double>  DNAGetHistValue(string id,DateTime beginTime,Int32 period)
         {
             DateTime endTime = beginTime.AddHours(1);
-            if (endTime > DateTime.Now)
-                endTime = DateTime.Now;
+            if (endTime > TasksContainer.Instance.HistoryEndTime)
+                endTime = TasksContainer.Instance.HistoryEndTime;
             string szBegintTime = string.Format("{0:MM/dd/yy hh:mm:ss}",beginTime);
             string szEndTime = string.Format("{0:MM/dd/yy hh:mm:ss}", endTime);
             UInt32 key=0;

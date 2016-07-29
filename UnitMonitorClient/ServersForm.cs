@@ -41,13 +41,13 @@ namespace UnitMonitorClient
                 {
                     toolLink.Enabled = false;
                     toolCancelLink.Enabled = true;
-                    toolTasks.Enabled = true;
+                   
                 }
                 else
                 {
                     toolLink.Enabled = true;
                     toolCancelLink.Enabled = false;
-                    toolTasks.Enabled = false;
+                    
                 }
             }
 
@@ -80,30 +80,7 @@ namespace UnitMonitorClient
             info.TurnOffLine();
         }
 
-        private void toolTasks_Click(object sender, EventArgs e)
-        {
-            if (dgvServers.SelectedRows.Count > 0)
-            {
-                try
-                {
-                    ServerInfo info = Servers.Instance[dgvServers.SelectedRows[0].Index];
-                    if ((info != null) && (info.Channel != null))
-                    {
-                        TaskInfo[] tasks = info.Channel.Tasks();
-                        TasksForm frm = new TasksForm(tasks);
-                        frm.ShowDialog();
-
-                    }
-                }
-                catch (Exception ex)
-                {
-
-                    MessageBox.Show(string.Format("打开任务列表时错误，错误消息{10}", ex.Message));
-                }
-
-
-            }
-        }
+     
 
         private void toolLink_Click(object sender, EventArgs e)
         {

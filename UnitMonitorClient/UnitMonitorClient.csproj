@@ -50,11 +50,23 @@
     <Compile Include="ClientCommunication.cs" />
     <Compile Include="ClientMessageCenter.cs" />
     <Compile Include="ClientService.cs" />
+    <Compile Include="HistoryMessageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HistoryMessageForm.Designer.cs">
+      <DependentUpon>HistoryMessageForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MessageTypeSelectorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MessageTypeSelectorDialog.Designer.cs">
+      <DependentUpon>MessageTypeSelectorDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,8 +84,14 @@
     <Compile Include="TasksForm.designer.cs">
       <DependentUpon>TasksForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="HistoryMessageForm.resx">
+      <DependentUpon>HistoryMessageForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MessageTypeSelectorDialog.resx">
+      <DependentUpon>MessageTypeSelectorDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -90,6 +108,7 @@
     <EmbeddedResource Include="TasksForm.resx">
       <DependentUpon>TasksForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Properties\DataSources\UnitMonitorCommunication.MessageInfo.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

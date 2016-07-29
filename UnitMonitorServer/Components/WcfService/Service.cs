@@ -18,9 +18,9 @@ namespace UnitMonitorServer
         }
         //向服务器注册一个客户端
 
-        public bool RegService(string ip,string port)
+        public bool RegService(string ip, string port)
         {
-          return   Clients.Instance.RegClient(ip, Convert.ToInt32(port));
+            return Clients.Instance.RegClient(ip, Convert.ToInt32(port));
         }
         //服务器端服务的名称
 
@@ -32,7 +32,7 @@ namespace UnitMonitorServer
 
         public bool ServiceShutOff(string ip)
         {
-           ClientInfo inf= Clients.Instance.FindClient(ip);
+            ClientInfo inf = Clients.Instance.FindClient(ip);
             if (inf != null)
             {
                 inf.TurnOffLine();
@@ -41,59 +41,74 @@ namespace UnitMonitorServer
             }
             return true;
         }
-       public TaskInfo[] Tasks()
+        /// <summary>
+        /// 读取所有任务
+        /// </summary>
+        /// <returns></returns>
+        public List<TaskInfo> AllTasks()
         {
-            string fullPath = Environment.CurrentDirectory + "\\" + "Tasks";
+            string fullPath = Directory.GetCurrentDirectory() + "\\" + "Tasks";
             fullPath = fullPath.ToLower();
             if (!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
             DirectoryInfo path = new DirectoryInfo(fullPath);
-                List<TaskInfo> tasks = new List<TaskInfo>();
+            List<TaskInfo> tasks = new List<TaskInfo>();
             GetPathTasks(tasks, path, fullPath);
-            return tasks.ToArray();
+            return tasks;
         }
-        private void GetPathTasks(List<TaskInfo> tasks, DirectoryInfo dir,string rootPath)
+        public List<TaskInfo> RunningTasks()
+        {
+            List<TaskInfo> tasks = new List<TaskInfo>();
+            foreach (var item in TasksContainer.Instance)
+            {
+                tasks.Add(item.ToTaskInfo());
+            }
+            return tasks;
+        }
+        private void GetPathTasks(List<TaskInfo> tasks, DirectoryInfo dir, string rootPath)
         {
             foreach (var item in dir.GetFiles())
             {
                 if (item.Extension.ToLower().Contains("config"))
                 {
                    
-                        TaskInfo inf = new TaskInfo();
-                        inf.Name=item.Name.Replace(".config", "");
-                        inf.ModuleName = "";
+                    TaskBase task = TasksContainer.Instance.FindTask(item.FullName);
+                    if (task == null)
+                        task = TasksContainer.LoadTask(item);
+                    if (task != null)
+                        tasks.Add(task.ToTaskInfo());
+                }
 
-                        inf.Path = dir.FullName.Replace(rootPath, "");
-                        TaskBase task = null;
-                        if (TasksContainer.Instance.IsRunning)
-                            task= TasksContainer.Instance.FindTask(inf.Name);
-                        if (task == null)
-                            task = TasksContainer.LoadTask(item);
-
-                        if (task != null)
-                        {
-                            inf.IsRunning = true;
-                            inf.ModuleName = task.GetType().FullName;
-                            inf.BeginTime = task.BeginTime;
-                            inf.FailCount = task.FailCount;
-                            inf.LastRunTime = task.LastRunTime;
-                            inf.LastSpendTime = task.LastSpendTime;
-                            inf.LastSuccess = task.LastSuccess;
-                            inf.Period = task.Period;
-                            inf.PersistantFail = task.PersistantFail;
-                            inf.PersistantSuccess = task.PersistantSuccess;
-                            inf.RunCount = task.RunCount;
-                            inf.SuccessCount = task.SuccessCount;
-                        }
-                        tasks.Add(inf);
-             
-                    }               
-                
             }
             foreach (var item in dir.GetDirectories())
             {
-                GetPathTasks(tasks, item,rootPath);
+                GetPathTasks(tasks, item, rootPath);
             }
+        }
+
+        public string[] HistoryMessageFiles()
+        {
+            List<string> files = new List<string>();
+            string fullPath = Environment.CurrentDirectory + "\\" + "Log";
+            if (!Directory.Exists(fullPath))
+                Directory.CreateDirectory(fullPath);
+            DirectoryInfo dir = new DirectoryInfo(fullPath);
+            foreach (var item in dir.GetFiles())
+            {
+                if (item.Extension.Contains("log"))
+                    files.Add(item.Name.Replace(".log", ""));
+            }
+            return files.ToArray();
+        }
+
+        public Stream HistoryMessage(string messageFile)
+        {
+            string fullname = Environment.CurrentDirectory + "\\Log\\" + messageFile + ".log";
+            if (File.Exists(fullname))
+            {
+                return File.OpenRead(fullname);
+            }
+            return null;
         }
     }
 

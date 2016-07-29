@@ -5,6 +5,8 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.ServiceModel.Web;
+using System.IO;
+
 namespace UnitMonitorCommunication
 {
     [ServiceContract]
@@ -28,8 +30,17 @@ namespace UnitMonitorCommunication
         string ServiceName();
 
         [OperationContract]
-        [WebGet(UriTemplate = "Tasks")]
-        TaskInfo[] Tasks();
+        [WebGet(UriTemplate = "AllTasks")]
+        List<TaskInfo> AllTasks();
+        [OperationContract]
+        [WebGet(UriTemplate = "RunningTasks")]
+        List<TaskInfo> RunningTasks();
+        [OperationContract]
+        [WebGet(UriTemplate = "HistoryMessageFiles")]
+        string[] HistoryMessageFiles();
+        [OperationContract]
+        [WebGet(UriTemplate = "HistoryMessage/{messageFile}")]
+        Stream HistoryMessage(string messageFile);
     }
 
     

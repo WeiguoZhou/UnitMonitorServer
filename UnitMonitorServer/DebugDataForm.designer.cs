@@ -32,17 +32,21 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.dgvPoints = new System.Windows.Forms.DataGridView();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolTempValuesForm = new System.Windows.Forms.ToolStripButton();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.dgvPoints = new System.Windows.Forms.DataGridView();
             this.clAlias = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clPointId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clUsed = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnLoadValues = new System.Windows.Forms.ToolStripButton();
+            this.btnSaveValues = new System.Windows.Forms.ToolStripButton();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPoints)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -61,7 +65,9 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripSeparator1,
-            this.toolTempValuesForm});
+            this.toolTempValuesForm,
+            this.btnLoadValues,
+            this.btnSaveValues});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(696, 25);
@@ -75,8 +81,23 @@
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Text = "步进运行";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolTempValuesForm
+            // 
+            this.toolTempValuesForm.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolTempValuesForm.Image = ((System.Drawing.Image)(resources.GetObject("toolTempValuesForm.Image")));
+            this.toolTempValuesForm.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolTempValuesForm.Name = "toolTempValuesForm";
+            this.toolTempValuesForm.Size = new System.Drawing.Size(23, 22);
+            this.toolTempValuesForm.Text = "临时数据";
+            this.toolTempValuesForm.Click += new System.EventHandler(this.toolTempValuesForm_Click);
             // 
             // dgvPoints
             // 
@@ -98,37 +119,6 @@
             this.dgvPoints.TabIndex = 2;
             this.dgvPoints.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPoints_RowValidated);
             this.dgvPoints.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvPoints_RowValidating);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolTempValuesForm
-            // 
-            this.toolTempValuesForm.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolTempValuesForm.Image = ((System.Drawing.Image)(resources.GetObject("toolTempValuesForm.Image")));
-            this.toolTempValuesForm.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolTempValuesForm.Name = "toolTempValuesForm";
-            this.toolTempValuesForm.Size = new System.Drawing.Size(23, 22);
-            this.toolTempValuesForm.Text = "临时数据";
-            this.toolTempValuesForm.Click += new System.EventHandler(this.toolTempValuesForm_Click);
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 401);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(696, 22);
-            this.statusStrip1.TabIndex = 3;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // statusLabel
-            // 
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(44, 17);
-            this.statusLabel.Text = "状态：";
             // 
             // clAlias
             // 
@@ -165,6 +155,46 @@
             this.clDescription.Name = "clDescription";
             this.clDescription.ReadOnly = true;
             this.clDescription.Width = 300;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 401);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(696, 22);
+            this.statusStrip1.TabIndex = 3;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(44, 17);
+            this.statusLabel.Text = "状态：";
+            // 
+            // btnLoadValues
+            // 
+            this.btnLoadValues.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnLoadValues.Image = ((System.Drawing.Image)(resources.GetObject("btnLoadValues.Image")));
+            this.btnLoadValues.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnLoadValues.Name = "btnLoadValues";
+            this.btnLoadValues.Size = new System.Drawing.Size(23, 22);
+            this.btnLoadValues.Text = "加载点值";
+            this.btnLoadValues.Click += new System.EventHandler(this.btnLoadValues_Click);
+            // 
+            // btnSaveValues
+            // 
+            this.btnSaveValues.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnSaveValues.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveValues.Image")));
+            this.btnSaveValues.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSaveValues.Name = "btnSaveValues";
+            this.btnSaveValues.Size = new System.Drawing.Size(23, 22);
+            this.btnSaveValues.Text = "保存点值";
+            this.btnSaveValues.Click += new System.EventHandler(this.btnSaveValues_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // DebugDataForm
             // 
@@ -205,5 +235,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn clValue;
         private System.Windows.Forms.DataGridViewTextBoxColumn clUsed;
         private System.Windows.Forms.DataGridViewTextBoxColumn clDescription;
+        private System.Windows.Forms.ToolStripButton btnLoadValues;
+        private System.Windows.Forms.ToolStripButton btnSaveValues;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }

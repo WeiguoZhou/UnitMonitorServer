@@ -8,6 +8,9 @@ using System.Xml;
 
 namespace UnitMonitorClient
 {
+    /// <summary>
+    /// 所有服务端，从配置文件Servers.config中读取
+    /// </summary>
     class Servers : BindingList<ServerInfo>
     {
         public event EventHandler ServerChanged;
@@ -144,6 +147,16 @@ namespace UnitMonitorClient
                 }
 
             }
+        }
+        public List<ServerInfo> OnlineServers()
+        {
+            List<ServerInfo> onlineServers = new List<ServerInfo>();
+            foreach (var item in this)
+            {
+                if (item.IsOnline)
+                    onlineServers.Add(item);
+            }
+            return onlineServers;
         }
         public void ServerTurnOff(string ip)
         {

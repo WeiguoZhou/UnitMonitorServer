@@ -126,5 +126,16 @@ namespace UnitMonitorClient
             }
         }
 
+        private void toolHistoryMessages_Click(object sender, EventArgs e)
+        {
+            HistoryMessageForm frm = new HistoryMessageForm();
+            frm.ShowDialog();
+        }
+
+        private void toolTasks_Click(object sender, EventArgs e)
+        {
+            TasksForm frm = new TasksForm();
+            frm.ShowDialog();
+        }
     }
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using UnitMonitorCommon;
+using System.IO;
 
 namespace UnitMonitorServer
 {
@@ -42,15 +43,15 @@ namespace UnitMonitorServer
                     dgvPoints.Rows.Add(values);
                 }
             }
-            catch
+            catch(Exception ex)
             {
-
+                MessageBox.Show(string.Format("加载点表时出错，错误消息：{0}", ex.Message));
             }
             
-            task.RunComplete += UpdateView;
+            task.AfterInitData += UpdateView;
         }
 
-        private void UpdateView(TaskBase task)
+        private void UpdateView(object sender,EventArgs e)
         {
             if (dgvPoints.InvokeRequired)
                 dgvPoints.Invoke(new UpdatetData(UpdateDataView));
@@ -120,6 +121,82 @@ namespace UnitMonitorServer
                 return;
             DataGridViewRow row = dgvPoints.Rows[e.RowIndex];
             task.SetPointData(row.Cells[1].Value.ToString(), Convert.ToDouble(row.Cells[3].Value));
+        }
+
+        private void btnLoadValues_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            string dir = Directory.GetCurrentDirectory() + "\\DebugData";
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+            dialog.InitialDirectory = dir;
+            dialog.Filter = "points files (*.points)|*.points|All files (*.*)|*.*";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                string file = dialog.FileName;
+                try
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(file);
+                    foreach (XmlNode item in doc.GetElementsByTagName("point"))
+                    {
+                        string id= item.Attributes["id"].Value;
+                        double value= Convert.ToDouble(item.Attributes["value"].Value);
+                        DataGridViewRow row = GetRowByPointId(id);
+                        if (row != null)
+                            row.Cells[3].Value = value;
+                        task.SetPointData(id, value);
+                    }
+                }
+                catch (Exception ex )
+                {
+
+                    MessageBox.Show(ex.Message);
+                }
+
+            }
+        }
+        private DataGridViewRow GetRowByPointId(string id)
+        {
+            foreach (DataGridViewRow row in dgvPoints.Rows)
+            {
+                if (row.Cells[1].Value.ToString() == id)
+                    return row;
+            }
+            return null;
+        }
+
+        private void btnSaveValues_Click(object sender, EventArgs e)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml("<points></points>");
+            XmlNode rootNode = doc.GetElementsByTagName("points")[0];
+            foreach (DataGridViewRow row in dgvPoints.Rows)
+            {
+                string id = row.Cells[1].Value.ToString();
+                string value = row.Cells[3].Value==null?"": row.Cells[3].Value.ToString();
+                XmlNode node= doc.CreateNode(XmlNodeType.Element, "point", null);
+                XmlAttribute attrId = doc.CreateAttribute("id");
+                attrId.Value = id;
+                node.Attributes.Append(attrId);
+                XmlAttribute attrValue = doc.CreateAttribute("value");
+                attrValue.Value= value;
+                node.Attributes.Append(attrValue);
+                rootNode.AppendChild(node);
+            }
+            string dir = Directory.GetCurrentDirectory() + "\\DebugData";
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+ 
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.InitialDirectory = dir;
+            dialog.Filter= "points files (*.points)|*.points|All files (*.*)|*.*";
+            dialog.FileName = task.TaskName;
+            dialog.DefaultExt = "points";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                doc.Save(dialog.FileName);
+            }
         }
     }
 }
