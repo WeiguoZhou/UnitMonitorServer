@@ -32,6 +32,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,9 +43,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommUtil.cs" />
+    <Compile Include="ComponentBase.cs" />
+    <Compile Include="ComponentContainer.cs" />
+    <Compile Include="ComponentsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComponentsForm.Designer.cs">
+      <DependentUpon>ComponentsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="EzDnaApi.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="MessageCenter.cs" />
+    <Compile Include="FunGroup.cs" />
+    <Compile Include="IMergeToolStrip.cs" />
+    <Compile Include="ParamSetting.cs" />
+    <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskAnalogExtensions.cs" />
     <Compile Include="TaskBase.cs" />
@@ -57,6 +69,14 @@
       <Project>{a07a05af-6f11-4f48-984b-3e54e91bfe2f}</Project>
       <Name>CommunicationBase</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ComponentsForm.resx">
+      <DependentUpon>ComponentsForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\CommunicationBase.ComponentInfo.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

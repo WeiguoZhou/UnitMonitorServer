@@ -23,6 +23,10 @@ namespace UnitMonitorCommunication
         [OperationContract]
         [WebInvoke(UriTemplate = "RegService/{ip}/{port}")]
         bool RegService(string ip, string port);
+        //测试客户端是否在线
+        [OperationContract]
+        [WebInvoke(UriTemplate = "TestOnline")]
+        bool TestOnline();
         //通知客户端服务端已关闭
         [OperationContract]
         [WebInvoke(UriTemplate = "ServiceShutOff/{ip}")]
@@ -30,7 +34,6 @@ namespace UnitMonitorCommunication
         //服务器端向客户端发送消息
         [OperationContract]
         [WebInvoke(UriTemplate = "SendMessage", BodyStyle = WebMessageBodyStyle.Wrapped)]
-
        bool SendMessage(MessageInfo message);
        
   

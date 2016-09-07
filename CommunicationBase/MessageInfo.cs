@@ -28,6 +28,11 @@ namespace UnitMonitorCommunication
         /// </summary>
         [DataMember]
         public string  TaskPath { set; get; }
+        /// <summary>
+        /// 发送消息的任务名称
+        /// </summary>
+        [DataMember]
+        public string TaskName { set; get; }
         [DataMember]
         public DateTime OccurTime { set; get; }
         public MessageInfo()
@@ -49,7 +54,8 @@ namespace UnitMonitorCommunication
         [EnumMember]
         Danger= 0x16,
         [EnumMember]
-        Examination= 0x32
-
+        Examination= 0x32,
+        [EnumMember]
+        Debug=0X64
     }
 }

@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+<taskinfo name="5A磨" assembly="Boiler, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" class="Boiler.Mill" period="60" description="" >
+
+
+</taskinfo>
+	<funGroups>
+		<funGroup index="0"  allowUnUse="false" defaultUsed="true" description="5A磨煤机必须监视项">
+			<point index="0" id="CSDC.DCS5AI.50HFC10AJ001-LP" type="int"  description="5A磨煤机"></point>
+			<point index="1" id="CSDC.DCS5AI.50HFC10AP011-LP" type="int"  description="5A磨油泵"></point>
+			<point index="2" id="CSDC.DCS5AI.50HFC10AH011-LP" type="int"  description="5A磨电加热"></point>
+			<point index="3" id="CSDC.DCS5AI.50HFE10AA030-LP" type="int"  description="5A磨进口快关门"></point>
+			<point index="4" id="CSDC.DCS5AI.50LBG85AA041-LP" type="int"  description="5A磨灭火蒸汽门"></point>
+		</funGroup>
+		<funGroup index="1" defaultUsed="false" description="5A磨煤机油系统监视（油泵电加热均停时退出监视）">
+			<point index="0" id="CSDC.DCS5AI.50HFC10CT009" type="double"  description="5A磨油箱油温"></point>
+			<point index="1" id="CSDC.DCS5AI.50HFC10CP007" type="double"  description="5A磨油压"></point>
+			<point index="2" id="CSDC.DCS5AI.AMILLLUBHTR-LOCK" type="bool"  description="5A磨电加热SLC"></point>
+			<point index="3" id="CSDC.DCS5AI.50HFC10CT009" type="bool"  description="5A磨油压低"></point>
+			<point index="4" id="CSDC.DCS5AI.50HFC10CP007" type="bool"  description="5A磨油压低低1"></point>
+			<point index="5" id="CSDC.DCS5AI.AMILLLUBHTR-LOCK" type="bool"  description="5A磨油压低低2"></point>
+			<point index="6" id="CSDC.DCS5AI.50HFC10CT009" type="bool"  description="5A磨油压低低3"></point>
+			<point index="7" id="CSDC.DCS5AI.50HFC10CP007" type="bool"  description="5A磨油流量低"></point>
+			<point index="8" id="CSDC.DCS5AI.AMILLLUBHTR-LOCK" type="bool"  description="5A磨油滤网差压高"></point>
+			<point index="9" id="CSDC.DCS5AI.AMILLLUBHTR-LOCK" type="bool"  description="5A磨油箱油位低"></point>
+		</funGroup>
+		<funGroup index="2" defaultUsed="false" bearingChangeHighCheck="true" description="5A磨煤机、电机、旋转分离器轴承温度监视（磨煤机停用后退出监视）">
+			<point index="0" id="CSDC.DCS5AI.50HFC10CT019" type="double" highValue="65" highResetValue="60" description="5A磨行星齿轮箱输入轴承温度1"></point>
+			<point index="1" id="CSDC.DCS5AI.50HFC10CT020" type="double" highValue="65" highResetValue="60" description="5A磨行星齿轮箱输入轴承温度2"></point>
+			<point index="2" id="CSDC.DCS5AI.50HFC10CT021" type="double" highValue="65" highResetValue="60" description="5A磨行星齿轮箱轴承温度1"></point>
+			<point index="3" id="CSDC.DCS5AI.50HFC10CT022" type="double" highValue="65" highResetValue="60" description="5A磨行星齿轮箱轴承温度2"></point>
+			<point index="4" id="CSDC.DCS5AI.50HFC10CT023" type="double" highValue="65" highResetValue="60"  description="5A磨行星齿轮箱轴承温度3"></point>
+			<point index="5" id="CSDC.DCS5AI.50HFC10CT024" type="double" highValue="65" highResetValue="60" description="5A磨行星齿轮箱轴承温度4"></point>
+			<point index="6" id="CSDC.DCS5AI.50HFC10CT011" type="double" highValue="60" highResetValue="55" description="5A磨电机轴承温度1"></point>
+			<point index="7" id="CSDC.DCS5AI.50HFC10CT012" type="double" highValue="60" highResetValue="55" description="5A磨电机轴承温度2"></point>
+			<point index="8" id="CSDC.DCS5AI.50HFC10CT004" type="double" highValue="60" highResetValue="55" description="5A磨旋转分离器轴承温度1"></point>
+			<point index="9" id="CSDC.DCS5AI.50HFC10CT005" type="double" highValue="60" highResetValue="55" description="5A磨旋转分离器轴承温度2"></point>			
+		</funGroup>
+		<funGroup index="3" defaultUsed="false" description="5A给煤机监视（磨煤机停用后退出监视）">
+			<point index="0" id="CSDC.DCS5AI.50HFB10AF001-LP" type="int"  description="5A给煤机"></point>
+			<point index="1" id="CSDC.DCS5AI.50HFB10AP011XB01" type="bool"  description="5A给煤机清扫链"></point>
+			<point index="2" id="CSDC.DCS5AI.50HFV14GW001XB01" type="bool"  description="5A磨旋转分离器"></point>
+			<point index="3" id="CSDC.DCS5AI.50HFB10AF001AI01" type="double"  description="5A磨给煤量"></point>
+			<point index="4" id="CSDC.DCS5AI.50HFB10AP001XQ01" type="double"  description="5A给煤机转速"></point>
+			<point index="5" id="CSDC.DCS5AI.50HFB10AF001DI05" type="bool"  description="5A给煤机断煤"></point>
+			<point index="6" id="CSDC.DCS5AI.50HFB10AF001DI06" type="bool"  description="5A给煤机下阀堵煤"></point>
+		</funGroup>
+		<funGroup index="4" defaultUsed="false" description="5A磨煤机风门监视（快关门关闭后退出监视）">
+			<point index="0" id="CSDC.DCS5AI.50HFW10AA041-LP" type="int"  description="5A磨密封风门"></point>
+			<point index="1" id="CSDC.DCS5AI.50HFB10AA001-LP" type="int"  description="5A给煤机下阀"></point>
+			<point index="2" id="CSDC.DCS5AI.50HFA10AA001-LP" type="int"  description="5A给煤机上阀"></point>
+			<point index="3" id="CSDC.DCS5AI.50HFW10AA011-LP" type="int"  description="5A给煤机密封风门"></point>
+			<point index="4" id="CSDC.DCS5AI.FA-MILLACOLDCVMA" type="int"  description="5A磨冷风调门手自动状态"></point>
+			<point index="5" id="CSDC.DCS5AI.FA-MILLAHOTCVMA" type="int"  description="5A磨热风调门手自动状态"></point>
+			<point index="6" id="CSDC.DCS5AI.50HFE10CG110XQ01" type="double"   description="5A磨冷风调门开度"></point>
+			<point index="7" id="CSDC.DCS5AI.50HFE10CG120XQ01" type="double"  description="5A磨热风调门开度"></point>
+			<point index="8" id="CSDC.DCS5AI.50HFE10AA010-LP" type="int"  description="5A磨冷风隔绝门"></point>
+			<point index="9" id="CSDC.DCS5AI.50HFE10AA020-LP" type="int"  description="5A磨热风隔绝门"></point>
+		</funGroup>
+		<funGroup index="5" defaultUsed="false" description="5A磨煤机、给煤机、旋转分离器电流监视（磨煤机停用后退出监视）">
+			<point index="0" id="CSDC.DCS5AI.50HFC10AJ001XQ01" type="double"  description="5A磨电流"></point>
+			<point index="1" id="CSDC.DCS5AI.50HFC10AJ001XQ01" type="double"  description="5A给煤机电流"></point>
+			<point index="2" id="CSDC.DCS5AI.50HFC10AJ001XQ01" type="double"  description="5A旋转分离器电流"></point>
+		</funGroup>
+		<funGroup index="6" defaultUsed="false" description="5A磨煤机风量、风压、风温监视（磨煤机停用后退出监视）">
+			<point index="0" id="CSDC.DCS5AI.50HFE10CP001" type="double" description="5A磨进口风压"></point>
+			<point index="1" id="CSDC.DCS5AI.50HFC10CP003" type="double" description="5A磨出口风粉压力1"></point>
+			<point index="2" id="CSDC.DCS5AI.50HFC10CP004" type="double" description="5A磨出口风粉压力2"></point>
+			<point index="3" id="CSDC.DCS5AI.50HFC10CT001" type="double" description="5A磨出口温度1"></point>
+			<point index="4" id="CSDC.DCS5AI.50HFC10CT002" type="double" description="5A磨出口温度2"></point>
+			<point index="5" id="CSDC.DCS5AI.50HFC10CT003" type="double" description="5A磨出口温度3"></point>
+			<point index="6" id="CSDC.DCS5AI.50HFC10CP001" type="double" description="5A磨密封风与一次风差压1"></point>
+			<point index="7" id="CSDC.DCS5AI.50HFC10CP002" type="double" description="5A磨密封风与一次风差压2"></point>
+			<point index="8" id="CSDC.DCS5AI.50HFC10CP005" type="double" description="5A磨碗差压"></point>
+			<point index="9" id="CSDC.DCS5AI.FA-PAFLOW1" type="double" description="5A磨风量1"></point>
+			<point index="10" id="CSDC.DCS5AI.FA-PAFLOW2" type="double" description="5A磨风量2"></point>
+			<point index="11" id="CSDC.DCS5AI.FA-PAFLOW3" type="double" description="5A磨风量3"></point>
+		</funGroup>
+
+		<funGroup index="7" defaultUsed="false" description="5A磨煤机火检监视（磨煤机停用后退出监视）">
+			<point index="0" id="CSDC.DCS5AI.50HHA11CR001XQ01" type="double"  description="5A磨#1角火检强度"></point>
+			<point index="1" id="CSDC.DCS5AI.50HHA12CR001XQ01" type="double"  description="5A磨#2角火检强度"></point>
+			<point index="2" id="CSDC.DCS5AI.50HHA13CR001XQ01" type="double"  description="5A磨#3角火检强度"></point>
+			<point index="3" id="CSDC.DCS5AI.50HHA14CR001XQ01" type="double"  description="5A磨#4角火检强度"></point>
+			<point index="4" id="CSDC.DCS5AI.A1COALFLM" type="bool"  description="5A磨#1角火检开关量"></point>
+			<point index="5" id="CSDC.DCS5AI.A2COALFLM" type="bool"  description="5A磨#2角火检开关量"></point>
+			<point index="6" id="CSDC.DCS5AI.A3COALFLM" type="bool"  description="5A磨#3角火检开关量"></point>
+			<point index="7" id="CSDC.DCS5AI.A4COALFLM" type="bool"  description="5A磨#4角火检开关量"></point>
+		</funGroup>
+	</funGroups>
+		
+
+
+</configuration>
+

@@ -11,370 +11,268 @@ namespace Boiler
 {
     public class Mill : TaskBase
     {
-        #region "点号别名，防止拼写错误"
-        const string c_millRunState = "millRunState"; //磨煤机运行状态
-        const string c_feederRunState = "feederRunState"; //给煤机运行状态
-        const string c_feederCleanRunState = "feederCleanRunState"; //给煤机清扫链运行状态
-        const string c_oilPumpState = "oilPumpState"; //油泵运行状态
-        const string c_cycloneState = "cycloneState"; //旋转分离器运行状态
-        const string c_heatterState = "heatterState"; //电加热运行状态
-        const string c_heatterSLC = "heatterSLC"; //电加热SLC状态
-
-        const string c_valveHotCut = "valveHotCut"; //磨煤机热风隔绝门
-        const string c_valveColdCut = "valveColdCut"; //磨煤机冷风隔绝门
-        const string c_valveInnerCut = "valveInnerCut"; //磨煤机进口快关门
-        const string c_valveMillISeal = "valveMillSeal"; //磨煤机密封风门
-        const string c_valveFireSteam = "valveFireSteam"; //磨煤机灭火蒸汽隔绝门
-        const string c_valveFeederOut = "valveFeederOut"; //给煤机下阀
-        const string c_valveFeederIn = "valveFeederIn"; //给煤机上阀
-        const string c_valveFeederSeal = "valveFeederSeal"; //给煤机密封风门
-        const string c_adjustColdAM = "adjustColdAM"; //冷风调门手自动
-        const string c_adjustHotAM = "adjustHotAM"; //热风调门手自动
-        const string c_adjustHotValue = "adjustHotValue"; //热风调门开度
-        const string c_adjustColdValue = "adjustColdValue"; //冷风调门开度
-
-        const string c_millCurrent = "millCurrent"; //磨煤机电流
-        const string c_feederCurrent = "feederCurrent"; //给煤机电流
-        const string c_cycloneCurrent = "cycloneCurrent"; //旋转分离器电流
-
-        const string c_tankTemp = "tankTemp"; //油箱油温
-        const string c_oilP = "oilP"; //油压
-
-        const string c_entranceWindP = "entranceWindP"; //磨进口风压
-        const string c_outWindP1 = "outWindP1"; //磨出口风粉压力1
-        const string c_outWindP2 = "outWindP2"; //磨出口风粉压力2
-        const string c_outWindT1 = "outWindT1"; //磨出口温度1
-        const string c_outWindT2 = "outWindT2"; //磨出口温度2
-        const string c_outWindT3 = "outWindT3"; //磨出口温度3
-
-        const string c_sealWindDp1 = "sealWindDp1"; //密封风与一次风差压1
-        const string c_sealWindDp2 = "sealWindDp2"; //密封风与一次风差压2
-        const string c_millBowlDp = "millBowlDp"; //磨碗差压
-        const string c_windFlow1 = "windFlow1"; //磨风量1
-        const string c_windFlow2 = "windFlow2"; //磨风量2
-        const string c_windFlow3 = "windFlow3"; //磨风量3
-
-        const string c_coalFlow = "coalFlow"; //给煤量
-        const string c_feederSpeed = "feederSpeed"; //给煤机转速
-
-        const string c_bearingTemp1 = "bearingTemp1"; //行星齿轮箱输入轴承温度1
-        const string c_bearingTemp2 = "bearingTemp2"; //行星齿轮箱输入轴承温度2
-        const string c_bearingTemp3 = "bearingTemp3"; //行星齿轮箱轴承温度1
-        const string c_bearingTemp4 = "bearingTemp4"; //行星齿轮箱轴承温度2
-        const string c_bearingTemp5 = "bearingTemp5"; //行星齿轮箱轴承温度3
-        const string c_bearingTemp6 = "bearingTemp6"; //行星齿轮箱轴承温度4
-        const string c_motorTemp1 = "motorTemp1"; //电机轴承温度1
-        const string c_motorTemp2 = "motorTemp2"; //电机轴承温度2
-        const string c_cycloneTemp1 = "cycloneTemp1"; //旋转分离器轴承温度1
-        const string c_cycloneTemp2 = "cycloneTemp2"; //旋转分离器轴承温度2
+        #region "FunGroup的index"
+        const int f_basic= 0; //必须监视项，不允许关闭
+        const int f_oil = 1; //油系统
+        const int f_bearingTemp = 2; //磨煤机、电机、旋转分离器轴承温度
+        const int f_feeder = 3; //给煤机
+        const int f_windValve = 4; //风门
+        const int f_current = 5; //电流
+        const int f_wind = 6; //磨煤机风量、风压、风温监视
+        const int f_fireDetection = 7; //磨煤机火检
         #endregion
-
-        #region "在配置中查找设定值的键值"
-        const string s_windFlowFx = "windFlowFx"; //煤量与风量的Fx
+        #region "点表index，与配置文件中对应，防止引用错误"
+        #region "FunGroup.Index=0,f_basic,必须监视项"
+        const int p_millRunState = 0; //磨煤机运行状态
+        const int p_oilPumpState = 1; //油泵运行状态
+        const int p_heatterState = 2; //电加热运行状态
+        const int p_valveInnerCut = 3; //磨煤机进口快关门
+        const int p_valveFireSteam = 4; //磨煤机灭火蒸汽隔绝门
 
         #endregion
-        #region "功能开关"
-        const string f_checkBearingTemp = "checkBearingTemp"; //监视轴承温度
+        #region "FunGroup.Index=1,f_oil,油系统"
+        const int p_tankTemp = 0; //油箱油温
+        const int p_oilP = 1; //油压
+        const int p_heatterSLC = 2; //电加热SLC
+
+        const int p_oilPL = 3; //油压低信号
+        const int p_oilPLL1 = 4; //油压低低信号1
+        const int p_oilPLL2 = 5; //油压低低信号2
+        const int p_oilPLL3 = 6; //油压低低信号3
+        const int p_oilFlowL = 7; //油流量低信号
+        const int p_oilStrainerDPH = 8; //油滤网差压高信号
+        const int p_oilTankLevelL = 9; //油箱油位低信号
         #endregion
-        bool millOn = false;
-        bool millNewOn = false;
-        bool oilPumpOn = false;
-        bool oilPumpNewOn = false;
-        protected override void PreRun()
+        #region "FunGroup.Index=2,f_bearingTemp,磨煤机、电机、旋转分离器轴承温度"
+        const int p_bearingTemp1 = 0; //行星齿轮箱输入轴承温度1
+        const int p_bearingTemp2 = 1; //行星齿轮箱输入轴承温度2
+        const int p_bearingTemp3 = 2; //行星齿轮箱轴承温度1
+        const int p_bearingTemp4 = 3; //行星齿轮箱轴承温度2
+        const int p_bearingTemp5 = 4; //行星齿轮箱轴承温度3
+        const int p_bearingTemp6 = 5; //行星齿轮箱轴承温度4
+        const int p_motorTemp1 = 6; //电机轴承温度1
+        const int p_motorTemp2 = 7; //电机轴承温度2
+        const int p_cycloneTemp1 = 8; //旋转分离器轴承温度1
+        const int p_cycloneTemp2 = 9; //旋转分离器轴承温度2
+        #endregion
+        #region "FunGroup.Index=3,f_feeder,给煤机"
+        const int p_feederRunState = 0; //给煤机运行状态
+        const int p_feederCleanRunState = 1; //给煤机清扫链运行状态
+        const int p_cycloneState = 2; //旋转分离器运行状态
+        const int p_coalFlow = 3; //给煤量
+        const int p_feederSpeed = 4; //给煤机转速
+        const int p_coalInterruption = 5; //给煤机断煤信号
+        const int p_coalClog = 6; //给煤机堵煤信号
+        #endregion
+        #region "FunGroup.Index=4,f_windValve ,风门"
+        const int p_valveMillISeal = 0; //磨煤机密封风门
+        const int p_valveFeederOut = 1; //给煤机下阀
+        const int p_valveFeederIn = 2; //给煤机上阀
+        const int p_valveFeederSeal = 3; //给煤机密封风门
+        const int p_adjustColdAM = 4; //冷风调门手自动
+        const int p_adjustHotAM = 5; //热风调门手自动
+        const int p_adjustHotValue = 6; //热风调门开度
+        const int p_adjustColdValue = 7; //冷风调门开度
+        const int p_valveColdCut = 8; //磨煤机冷风隔绝门
+        const int p_valveHotCut = 9; //磨煤机热风隔绝门
+        #endregion
+        #region "FunGroup.Index=5,f_current电流"
+        const int p_millCurrent = 0; //磨煤机电流
+        const int p_feederCurrent = 1; //给煤机电流
+        const int p_cycloneCurrent = 2; //旋转分离器电流
+        #endregion
+        #region "FunGroup.Index=6,f_wind,磨煤机风量、风压、风温监视"
+        const int p_entranceWindP = 0; //磨进口风压
+        const int p_outWindP1 = 1; //磨出口风粉压力1
+        const int p_outWindP2 = 2; //磨出口风粉压力2
+        const int p_outWindT1 = 3; //磨出口温度1
+        const int p_outWindT2 = 4; //磨出口温度2
+        const int p_outWindT3 = 5; //磨出口温度3
+
+        const int p_sealWindDp1 = 6; //密封风与一次风差压1
+        const int p_sealWindDp2 = 7; //密封风与一次风差压2
+        const int p_millBowlDp = 8; //磨碗差压
+        const int p_windFlow1 = 9; //磨风量1
+        const int p_windFlow2 = 10; //磨风量2
+        const int p_windFlow3 = 11; //磨风量3
+        #endregion
+        #region "FunGroup.Index=7,f_fireDetection,磨煤机火检监视"
+        const int p_fireDetection1 = 0; //#1角火检强度
+        const int p_fireDetection2 = 1; //#2角火检强度
+        const int p_fireDetection3 = 2; //#3角火检强度
+        const int p_fireDetection4 = 3; //#4角火检强度
+        const int p_fireDetectionSignal1 =4; //#1角火检信号
+        const int p_fireDetectionSignal2 = 5; //#2角火检信号
+        const int p_fireDetectionSignal3 = 6; //#3角火检信号
+        const int p_fireDetectionSignal4 = 7; //#4角火检信号
+        #endregion
+        #endregion
+    
+   
+        protected override void PreInit()
         {
             //RunCount == 0时尚未取到数据
             if (this.RunCount == 0)
                 return;
-            int vMillRunState = LpValue(c_millRunState);
-            Point pBearingTemp = this.FindPointByAlais(c_bearingTemp1);
-            Point pMillCurrent = this.FindPointByAlais(c_millCurrent);
-
-            if (vMillRunState.IsOn())
+            FunGroup fun = this.FunGroups[f_basic];
+            //磨煤机运行状态
+            Point pMillRunState = fun.Points[p_millRunState];
+            if (pMillRunState.IsOn())
             {
-                if (!pBearingTemp.Used && this.FunSetting(f_checkBearingTemp))
-                {
-                    this.SetPointUse(c_bearingTemp1);
-                    this.SetPointUse(c_bearingTemp2);
-                    this.SetPointUse(c_bearingTemp3);
-                    this.SetPointUse(c_bearingTemp4);
-                    this.SetPointUse(c_bearingTemp5);
-                    this.SetPointUse(c_bearingTemp6);
-                    this.SetPointUse(c_motorTemp1);
-                    this.SetPointUse(c_motorTemp2);
-                    this.SetPointUse(c_cycloneTemp1);
-                    this.SetPointUse(c_cycloneTemp2);
-                }
-                if (!pMillCurrent.Used)
-                {
-                    this.SetPointUse(c_millCurrent);
-                    this.SetPointUse(c_feederCurrent);
-                    this.SetPointUse(c_cycloneCurrent);
-                    this.SetPointUse(c_coalFlow);
-                    this.SetPointUse(c_feederRunState);
-                    this.SetPointUse(c_feederCleanRunState);
-                    this.SetPointUse(c_cycloneState);
-                }
-
+                this.FunGroups[f_bearingTemp].Used = true;
+                this.FunGroups[f_current].Used = true;
+                this.FunGroups[f_feeder].Used = true;
+                this.FunGroups[f_fireDetection].Used = true;              
             }
-
-
-            if (pBearingTemp.Used && (vMillRunState.IsOff() || !this.FunSetting(f_checkBearingTemp)))
+            else if (pMillRunState.IsOff())
             {
-                this.SetPointUnUse(c_bearingTemp1);
-                this.SetPointUnUse(c_bearingTemp2);
-                this.SetPointUnUse(c_bearingTemp3);
-                this.SetPointUnUse(c_bearingTemp4);
-                this.SetPointUnUse(c_bearingTemp5);
-                this.SetPointUnUse(c_bearingTemp6);
-                this.SetPointUnUse(c_motorTemp1);
-                this.SetPointUnUse(c_motorTemp2);
-                this.SetPointUnUse(c_cycloneTemp1);
-                this.SetPointUnUse(c_cycloneTemp2);
+                this.FunGroups[f_bearingTemp].Stop();
+                this.FunGroups[f_current].Stop();
+                this.FunGroups[f_feeder].Stop();
+                this.FunGroups[f_fireDetection].Stop();
             }
-
-            if (vMillRunState.IsOff() && pMillCurrent.Used)
+            Point pOilPumpState = fun.Points[p_oilPumpState];
+            Point pHeatterState = fun.Points[p_heatterState];
+            if(pOilPumpState.IsOn() || pHeatterState.IsOn())
             {
-                this.SetPointUnUse(c_millCurrent);
-                this.SetPointUnUse(c_feederCurrent);
-                this.SetPointUnUse(c_cycloneCurrent);
-                this.SetPointUnUse(c_coalFlow);
-                this.SetPointUnUse(c_feederRunState);
-                this.SetPointUnUse(c_feederCleanRunState);
-                this.SetPointUnUse(c_cycloneState);
+                this.FunGroups[f_oil].Used = true;
             }
-            int vOilPumpState = LpValue(c_oilPumpState);
-            int vHeatterState = LpValue(c_heatterState);
-            bool oilPUsed = FindPointByAlais(c_oilP).Used;
-            if ((vOilPumpState.IsOn() || vHeatterState.IsOn()) && !oilPUsed)
+            //油泵停止10分钟后且电加热停用时，终止监视油系统
+            else if(pOilPumpState.TdOn(pOilPumpState.IsOff(),600) && pHeatterState.IsOff())
             {
-                this.SetPointUse(c_tankTemp);
-                this.SetPointUse(c_heatterSLC);
-                this.SetPointUse(c_oilP);
+                this.FunGroups[f_oil].Stop();
             }
-            else if ((vOilPumpState.IsOff() || vHeatterState.IsOff()) && oilPUsed)
+            Point pValveInnerCut= fun.Points[p_valveInnerCut];
+            if (!pValveInnerCut.IsOff())
             {
-                this.SetPointUnUse(c_tankTemp);
-                this.SetPointUnUse(c_heatterSLC);
-                this.SetPointUnUse(c_oilP);
+                this.FunGroups[f_wind].Used = true;
+                this.FunGroups[f_windValve].Used = true;
             }
-
+            else
+            {
+                this.FunGroups[f_wind].Stop();
+                this.FunGroups[f_windValve].Stop();
+            }
 
         }
         protected override void Process()
         {
-            //油箱油温
+            MonitorBasic();
+            MonitorBearTemp();
+            MonitorCurrent();
+            MonitorFeeder();
+            MonitorFireDetection();
+            MonitorOil();
+            MonitorWind();
+            MonitorWindValve();
+        }
 
+        private void MonitorWindValve()
+        {
+            throw new NotImplementedException();
+        }
 
-            //油箱油温高于50度报警
-            this.AnalogHTdOn(c_tankTemp, 50, 300);
-            //电加热故障报警
-            this.PowerFault(c_heatterState);
-            //电加热状态
-            int vHeatterState = LpValue(c_heatterState);
-            //电加热投入时
-            if (vHeatterState.IsOn())
+        private void MonitorWind()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MonitorOil()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MonitorBasic()
+        {
+            FunGroup fun = this.FunGroups[f_basic];
+            if (!fun.Used)
+                return;
+            fun.Points[p_millRunState].PowerNewFault();
+            fun.Points[p_oilPumpState].PowerNewFault();
+            fun.Points[p_heatterState].PowerNewFault();
+            fun.Points[p_valveInnerCut].ValveNewFault();
+            Point pValveFireSteam = fun.Points[p_valveFireSteam];
+            //灭火蒸汽门
+            if (pValveFireSteam.TdOn(!pValveFireSteam.IsOff(), 0))
+                RaiseSendMessage(MessageType.Warn, string.Format("{0}未关闭", pValveFireSteam.Description));
+        }
+
+        private void MonitorFireDetection()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MonitorFeeder()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MonitorCurrent()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MonitorBearTemp()
+        {
+            FunGroup fun = this.FunGroups[f_bearingTemp];
+            if (!fun.Used)
+                return;
+            fun.Points[p_bearingTemp1].AnalogH();
+            fun.Points[p_bearingTemp2].AnalogH();
+            fun.Points[p_bearingTemp3].AnalogH();
+            fun.Points[p_bearingTemp4].AnalogH();
+            fun.Points[p_bearingTemp5].AnalogH();
+            fun.Points[p_bearingTemp6].AnalogH();
+            fun.Points[p_motorTemp1].AnalogH();
+            fun.Points[p_motorTemp2].AnalogH();
+            fun.Points[p_cycloneTemp1].AnalogH();
+            fun.Points[p_cycloneTemp1].AnalogH();
+            Point pMillRunState = this.FunGroups[f_basic].Points[p_millRunState];
+            string bearingChangeHighCheck = fun.GetParamSetting("bearingChangeHighCheck");
+            bool isCheck = string.IsNullOrEmpty(bearingChangeHighCheck) ? false : Convert.ToBoolean(bearingChangeHighCheck);
+            if (!isCheck)
+                return;
+            if (pMillRunState.TdOn(pMillRunState.IsOn(), 1800, "MillOn1800"))
             {
-                //油箱油温如大于45度，电加热仍运行大于2分钟
-                this.AnalogHTdOn(c_tankTemp, 45, 120);
-                //油箱电加热运行，SLC未投入持续300秒以上报警
-                if (this.CanTdOn(!BoolValue(c_heatterSLC), 300, "HeatterOn_NoSLC"))
-                    SendMessge(MessageType.Alarm, string.Format("{0}油箱电加热运行时，SLC未投入", this.TaskName));
-            }
-
-
-            //油泵运行状态
-            int vOilPumpState = LpValue(c_oilPumpState);
-            //如果油泵运行,电加热未运行，油箱油温低于35度大于2分钟报警
-            if (vOilPumpState.IsOn() && !vHeatterState.IsOn())
-            {
-                if (this.AnalogLTdOn(c_tankTemp, 35, 120, false))
-                    SendMessge(MessageType.Alarm, string.Format("{0}油泵运行，油温小于35度，电加热未运行", this.TaskName));
-            }
-
-
-            //油泵运行时，油箱油温小于25时报警
-            if (vOilPumpState.IsOn())
-            {
-                if (this.AnalogL(c_tankTemp, 25, 30, false))
-                    SendMessge(MessageType.Alarm, string.Format("{0}油泵运行，油温小于25度", this.TaskName));
-            }
-            //如果油泵运行大于2分钟，油压大于0.45或小于0.14报警
-            if (this.LPTdOn(c_oilPumpState, 120))
-                this.AnalogHL(c_oilP, 0.45, 4, 0.14, 0.16);
-
-            //出口温度大于90度报警
-            this.AnalogH(c_outWindT1, 90, 85);
-
-            double vMillCurrent = AnalogValue(c_millCurrent);  //磨煤机电流
-            int vMillRunState = LpValue(c_millRunState);  //磨煤机运行状态
-                                                          // bool millNewOn = this.NewOn(c_millRunState, false);
-
-            //当磨煤机运行且电流大于35A时
-            if (vMillRunState.IsOn())
-            {
-                if ((vMillCurrent > 35) && !vOilPumpState.IsOn())
-                    SendMessge(MessageType.Danger, string.Format("{0}磨煤机运行但油泵未运行", this.TaskName));  //连续报警
-                DateTime currentTime = TasksContainer.Instance.CurrentTime;
-                if (!this.TempValue.ContainsKey("MillRunTime"))
-                    this.TempValue.Add("MillRunTime", currentTime);
-
-                if (this.TempValue.ContainsKey("StopMonitorTemp"))
-                {
-                    this.SetPointUse(c_bearingTemp1);
-                    this.SetPointUse(c_bearingTemp2);
-                    this.SetPointUse(c_bearingTemp3);
-                    this.SetPointUse(c_bearingTemp4);
-                    this.SetPointUse(c_bearingTemp5);
-                    this.SetPointUse(c_bearingTemp6);
-                    this.SetPointUse(c_motorTemp1);
-                    this.SetPointUse(c_motorTemp2);
-                    this.SetPointUse(c_cycloneTemp1);
-                    this.SetPointUse(c_cycloneTemp2);
-                    this.TempValue.Remove("StopMonitorTemp");
-                }
-                else
-                {
-                    //磨煤机电流大于85A持续3分钟发报警
-                    this.AnalogHTdOn(c_millCurrent, 85, 180);
-                    double runSecond = new TimeSpan(currentTime.Ticks - ((DateTime)this.TempValue["MillRunTime"]).Ticks).TotalSeconds;
-                    //轴承温度监视，分为刚启动半小时内和半小时外两种情况
-                    if (runSecond < 1800)
-                    {
-                        this.AnalogH(c_bearingTemp1, 60, 55);
-                        this.AnalogH(c_bearingTemp2, 60, 55);
-                        this.AnalogH(c_bearingTemp3, 60, 55);
-                        this.AnalogH(c_bearingTemp4, 60, 55);
-                        this.AnalogH(c_bearingTemp5, 60, 55);
-                        this.AnalogH(c_bearingTemp6, 60, 55);
-                        this.AnalogH(c_motorTemp1, 65, 60);
-                        this.AnalogH(c_motorTemp2, 65, 60);
-                        this.AnalogH(c_cycloneTemp1, 65, 60);
-                        this.AnalogH(c_cycloneTemp2, 65, 60);
-                        this.AnalogChangeH(c_bearingTemp1, 5, 300);
-                        this.AnalogChangeH(c_bearingTemp2, 5, 300);
-                        this.AnalogChangeH(c_bearingTemp3, 5, 300);
-                        this.AnalogChangeH(c_bearingTemp4, 5, 300);
-                        this.AnalogChangeH(c_bearingTemp5, 5, 300);
-                        this.AnalogChangeH(c_bearingTemp6, 5, 300);
-                        this.AnalogChangeH(c_motorTemp1, 5, 300);
-                        this.AnalogChangeH(c_motorTemp2, 5, 300);
-                        this.AnalogChangeH(c_cycloneTemp1, 5, 300);
-                        this.AnalogChangeH(c_cycloneTemp2, 5, 300);
-                    }
-                    else
-                    {
-                        this.AnalogH(c_bearingTemp1, 65, 60);
-                        this.AnalogH(c_bearingTemp2, 65, 60);
-                        this.AnalogH(c_bearingTemp3, 65, 60);
-                        this.AnalogH(c_bearingTemp4, 65, 60);
-                        this.AnalogH(c_bearingTemp5, 65, 60);
-                        this.AnalogH(c_bearingTemp6, 65, 60);
-                        this.AnalogH(c_motorTemp1, 70, 65);
-                        this.AnalogH(c_motorTemp2, 70, 65);
-                        this.AnalogH(c_cycloneTemp1, 70, 65);
-                        this.AnalogH(c_cycloneTemp2, 70, 65);
-                        this.AnalogChangeH(c_bearingTemp1, 5, 600);
-                        this.AnalogChangeH(c_bearingTemp2, 5, 600);
-                        this.AnalogChangeH(c_bearingTemp3, 5, 600);
-                        this.AnalogChangeH(c_bearingTemp4, 5, 600);
-                        this.AnalogChangeH(c_bearingTemp5, 5, 600);
-                        this.AnalogChangeH(c_bearingTemp6, 5, 600);
-                        this.AnalogChangeH(c_motorTemp1, 5, 600);
-                        this.AnalogChangeH(c_motorTemp2, 5, 600);
-                        this.AnalogChangeH(c_cycloneTemp1, 5, 600);
-                        this.AnalogChangeH(c_cycloneTemp2, 5, 600);
-                    }
-
-                }
+                //如果磨启动后超半小时
+                fun.Points[p_bearingTemp1].AnalogChangeH(5,300);
+                fun.Points[p_bearingTemp2].AnalogChangeH(5, 300);
+                fun.Points[p_bearingTemp3].AnalogChangeH(5, 300);
+                fun.Points[p_bearingTemp4].AnalogChangeH(5, 300);
+                fun.Points[p_bearingTemp5].AnalogChangeH(5, 300);
+                fun.Points[p_bearingTemp6].AnalogChangeH(5, 300);
+                fun.Points[p_motorTemp1].AnalogChangeH(5, 300);
+                fun.Points[p_motorTemp2].AnalogChangeH(5, 300);
+                fun.Points[p_cycloneTemp1].AnalogChangeH(5, 300);
+                fun.Points[p_cycloneTemp2].AnalogChangeH(5, 300);
             }
             else
             {
-                if (!this.TempValue.ContainsKey("StopMonitorTemp"))
-                {
-                    this.SetPointUnUse(c_bearingTemp1);
-                    this.SetPointUnUse(c_bearingTemp2);
-                    this.SetPointUnUse(c_bearingTemp3);
-                    this.SetPointUnUse(c_bearingTemp4);
-                    this.SetPointUnUse(c_bearingTemp5);
-                    this.SetPointUnUse(c_bearingTemp6);
-                    this.SetPointUnUse(c_motorTemp1);
-                    this.SetPointUnUse(c_motorTemp2);
-                    this.SetPointUnUse(c_cycloneTemp1);
-                    this.SetPointUnUse(c_cycloneTemp2);
-                    this.TempValue.Add("StopMonitorTemp", 1);
+                //如果磨启动后半小时内
+                fun.Points[p_bearingTemp1].AnalogChangeH(8, 300);
+                fun.Points[p_bearingTemp2].AnalogChangeH(8, 300);
+                fun.Points[p_bearingTemp3].AnalogChangeH(8, 300);
+                fun.Points[p_bearingTemp4].AnalogChangeH(8, 300);
+                fun.Points[p_bearingTemp5].AnalogChangeH(8, 300);
+                fun.Points[p_bearingTemp6].AnalogChangeH(8, 300);
+                fun.Points[p_motorTemp1].AnalogChangeH(8, 300);
+                fun.Points[p_motorTemp2].AnalogChangeH(8, 300);
+                fun.Points[p_cycloneTemp1].AnalogChangeH(8, 300);
+                fun.Points[p_cycloneTemp2].AnalogChangeH(8, 300);
 
-                }
-            }
-
-
-            //风门检测
-
-            int v_valveInnerCut = LpValue(c_valveInnerCut);
-            //灭火蒸汽门开启发报警
-            if (this.LPTdOff(c_valveFireSteam, 0))
-                SendMessge(MessageType.Warn, string.Format("{0}灭火蒸汽门开启", this.TaskName));
-            if (v_valveInnerCut.IsOn())
-            {
-                int v_valveHotCut = LpValue(c_valveHotCut);
-                int v_valveColdCut = LpValue(c_valveColdCut);
-                int v_valveFeederOut = LpValue(c_valveFeederOut);
-                if ((!v_valveHotCut.IsOff()) || (!v_valveColdCut.IsOff()))
-                {
-                    //当进口快关门开启且冷热风门任一失去关闭信号时，如密封风门未开延时60秒发报警
-                    if (this.LPTdOff(c_valveMillISeal, 60))
-                        SendMessge(MessageType.Warn, string.Format("{0}风门开启时密封风门未开", this.TaskName));
-                    //当进口快关门开启且冷热风门任一失去关闭信号时，如给煤机下阀开启但给煤机密封风门未开，延时60秒发报警
-                    if (v_valveFeederOut.IsOn() && this.LPTdOff(c_valveFeederSeal, 60))
-                        SendMessge(MessageType.Warn, string.Format("{0}风门开启时给煤机密封风门未开", this.TaskName));
-                    //当磨未启且进口快关门开启且冷热风门任一失去关闭信号时（一般是通风或刚停），如入口风压大于6KPa延时60秒报警，通常是进口快关门未开出或测点坏。
-                    if (vMillRunState.IsOff() && this.AnalogHTdOn(c_entranceWindP, 6, 60, false))
-                        SendMessge(MessageType.Alarm, string.Format("{0}通风时入口风压高，通常是进口快关门未开出或测点坏", this.TaskName));
-                }
-                if (vMillRunState.IsOn())
-                {
-                    double maxWindFlow, minWindFlow, AvgWindFlow, sunWindFlow;
-                    string[] c_windFlow = new string[] { c_windFlow1, c_windFlow2, c_windFlow3 };
-                    TaskAnalogExtensions.MaxMinSumAvgValue(this.GetAnalogValues(c_windFlow), out maxWindFlow, out minWindFlow, out AvgWindFlow, out sunWindFlow);
-                    if (this.CanReset((maxWindFlow - minWindFlow) > 80, (maxWindFlow - minWindFlow) < 20, "WindFlow_Dev_High"))
-                        SendMessge(MessageType.Alarm, string.Format("{0}三个风量偏差大于80", this.TaskName));
-                    if (this.TdOn(AvgWindFlow < 110, 60, "WindFlow_TooLow"))
-                        SendMessge(MessageType.Warn, string.Format("{0}运行时风量过低（小于110)", this.TaskName));
-
-                }
-
-
-
-            }
-            int v_feederRunState = LpValue(c_feederRunState);
-            if (v_feederRunState.IsOn())
-            {
-                //给煤量大于90T持续180秒报警
-                this.AnalogHTdOn(c_coalFlow, 90, 180);
-                //给煤机电流大于4.5A持续5分钟报警
-                this.AnalogHTdOn(c_feederCurrent, 4.5, 300);
-                //给煤机电流小于2.5A持续5分钟报警
-                this.AnalogLTdOn(c_feederCurrent, 2.5, 300);
-                double coalFlow = AnalogValue(c_coalFlow);
-                if (coalFlow > 40)
-                {
-                    double speedPerCoal = AnalogValue(c_feederSpeed) / coalFlow;
-                    if (this.TempValue.ContainsKey("FeederSpeedPerCoal"))
-                    {
-                        double olderSpeedPerCoal = (double)this.TempValue["FeederSpeedPerCoal"];
-                        //当给煤机每吨煤需要的转速比最初记忆大1时，发煤层减薄报警
-                        if (this.TdOn((speedPerCoal - olderSpeedPerCoal) > 1, 60, "SpeedPerCoal_Rising"))
-                            SendMessge(MessageType.Alarm, string.Format("{0}给煤机皮带煤层减薄（有断煤倾向）", this.TaskName));
-                        if (this.TdOn((speedPerCoal - olderSpeedPerCoal) < -1, 60, "SpeedPerCoal_Trailing"))
-                            SendMessge(MessageType.Alarm, string.Format("{0}给煤机皮带煤层有加重倾向（煤水份增大或有异物）", this.TaskName));
-                    }
-                    else
-                    {
-                        this.TempValue.Add("FeederSpeedPerCoal", speedPerCoal);
-                    }
-
-                }
             }
         }
 
+    
+
+  
+        /// <summary>
+        /// 轴承温度监测
+        /// </summary>
+    
+        /// <summary>
+        /// 风门风量监测
+        /// </summary>
+       
+        }
     }
-}

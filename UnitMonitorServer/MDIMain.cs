@@ -19,8 +19,17 @@ namespace UnitMonitorServer
         public MDIMain()
         {
             InitializeComponent();
+            
         }
-
+        /// <summary>
+        /// 暴露组件菜单，使一些组件能自动添加菜单项
+        /// </summary>
+        public ToolStripMenuItem ComponentMenu {
+            get
+            {
+                return toolComponents;
+            }
+        }
         private void ShowNewForm(object sender, EventArgs e)
         {
             Form childForm = new Form();
@@ -108,28 +117,15 @@ namespace UnitMonitorServer
 
         private void menuTask_Click(object sender, EventArgs e)
         {
-            Form frm=null;
-            foreach (Form item in this.MdiChildren)
-            {
-                if (item is frmTasks)
-                {
-                    frm = item;
-                    break;
-                }
-            }
-            if(frm==null)
-                frm = new frmTasks();
-            frm.MdiParent = this;
-            frm.WindowState = FormWindowState.Maximized;
-            frm.Show();
+
         }
 
         private void MDIMain_Load(object sender, EventArgs e)
         {
-            
 
-            
- 
+
+
+
         }
 
         private void toolTaskContainerForm_Click(object sender, EventArgs e)
@@ -141,9 +137,28 @@ namespace UnitMonitorServer
 
         private void toolClientsForm_Click(object sender, EventArgs e)
         {
-            ClientsForm frm = new ClientsForm();
-            frm.MdiParent = this;
-            frm.Show();
+
+        }
+        /// <summary>
+        /// 合并工具栏
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MDIMain_MdiChildActivate(object sender, EventArgs e)
+        {
+            ToolStripManager.RevertMerge(toolStrip);
+
+            if (this.ActiveMdiChild == null) return;
+            if (!(ActiveMdiChild is IMergeToolStrip))
+                return;
+            if ((ActiveMdiChild as IMergeToolStrip).MergeToolStrip == null) return;
+
+            ToolStripManager.Merge((ActiveMdiChild as IMergeToolStrip).MergeToolStrip, toolStrip);
+
+            if (toolStrip.Items.Count > 0)
+                toolStrip.Visible = true;
+            else
+                toolStrip.Visible = false;
         }
     }
 }

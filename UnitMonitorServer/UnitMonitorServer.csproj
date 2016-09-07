@@ -47,27 +47,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientsForm.cs">
+    <Compile Include="TaskForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ClientsForm.designer.cs">
-      <DependentUpon>ClientsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\WcfService\ClientInfo.cs" />
-    <Compile Include="Components\WcfService\Clients.cs" />
-    <Compile Include="Components\WcfService\ServerCommunication.cs" />
-    <Compile Include="Components\WcfService\Service.cs" />
-    <Compile Include="DebugDataForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DebugDataForm.designer.cs">
-      <DependentUpon>DebugDataForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmTasks.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmTasks.designer.cs">
-      <DependentUpon>frmTasks.cs</DependentUpon>
+    <Compile Include="TaskForm.designer.cs">
+      <DependentUpon>TaskForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MDIMain.cs">
       <SubType>Form</SubType>
@@ -83,20 +67,20 @@
     <Compile Include="TaskContainerForm.designer.cs">
       <DependentUpon>TaskContainerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TaskTempValueForm.cs">
+    <Compile Include="PointForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TaskTempValueForm.designer.cs">
-      <DependentUpon>TaskTempValueForm.cs</DependentUpon>
+    <Compile Include="PointForm.designer.cs">
+      <DependentUpon>PointForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="ClientsForm.resx">
-      <DependentUpon>ClientsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DebugDataForm.resx">
-      <DependentUpon>DebugDataForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmTasks.resx">
-      <DependentUpon>frmTasks.cs</DependentUpon>
+    <Compile Include="WelcomeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WelcomeForm.Designer.cs">
+      <DependentUpon>WelcomeForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="TaskForm.resx">
+      <DependentUpon>TaskForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MDIMain.resx">
       <DependentUpon>MDIMain.cs</DependentUpon>
@@ -113,10 +97,22 @@
     <EmbeddedResource Include="TaskContainerForm.resx">
       <DependentUpon>TaskContainerForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TaskTempValueForm.resx">
-      <DependentUpon>TaskTempValueForm.cs</DependentUpon>
+    <EmbeddedResource Include="PointForm.resx">
+      <DependentUpon>PointForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Clients.config">
+    <EmbeddedResource Include="WelcomeForm.resx">
+      <DependentUpon>WelcomeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Components\Logger.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Components\Statistics.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Components\WCFService.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Components\Components.Config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ModuleSettings\MainSteam.config">
@@ -137,6 +133,8 @@
     <None Include="ModuleSettings\SCR.rtf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Properties\DataSources\UnitMonitorCommon.FunGroup.datasource" />
+    <None Include="Properties\DataSources\UnitMonitorCommon.Point.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -149,8 +147,9 @@
     <None Include="Tasks\5号机组\汽机\5号机蒸汽系统.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Tasks\5号机组\锅炉\5A磨.config">
+    <None Include="Tasks\5号机组\锅炉\5A磨.task">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Tasks\5号机组\锅炉\5号机脱硝.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -181,12 +180,31 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\Logger\bin\Debug\Logger.dll">
+      <Link>Components\Logger.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Statistics\bin\Debug\Statistics.dll">
+      <Link>Components\Statistics.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\WCFService\bin\Debug\WCFService.dll">
+      <Link>Components\WCFService.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\WCFService\bin\Debug\WCFService.pdb">
+      <Link>Components\WCFService.pdb</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="EzDnaApi.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ModuleSettings\defaultParamDescription.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\DataSources\" />
+    <Folder Include="bin\Components\" />
     <Folder Include="Tasks\5号机组\电气\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

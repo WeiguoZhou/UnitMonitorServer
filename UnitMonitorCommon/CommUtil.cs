@@ -58,27 +58,24 @@ namespace UnitMonitorCommon
             return "中";
         }
         /// <summary>
-        /// html转义
-        /// 逗号","是我自己加的，不是标准的转义符
+        /// 转义逗号
         /// </summary>
         /// <param name="instr"></param>
         /// <returns></returns>
         public static string Transfer(string instr)
         {
             if (instr == null) return "";
-            return instr.Replace("&", "&amp;").Replace("<", "&lt;")
-                        .Replace(">", "&gt;").Replace("\"", "&quot;").Replace(",", "&comma;");
+            return instr.Replace(",", "&comma;");
         }
         /// <summary>
-        /// html转义字符串还原
+        /// 还原转义逗号
         /// </summary>
         /// <param name="instr"></param>
         /// <returns></returns>
         public static string DeTransfer(string instr)
         {
             if (instr == null) return "";
-            return instr.Replace("&amp;", "&").Replace("&lt;", "<")
-                        .Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&comma;", ",");
+            return instr.Replace("&comma;", ",");
         }
         /// <summary>
         /// 返回两个时间间隔的秒数
@@ -112,6 +109,15 @@ namespace UnitMonitorCommon
             }
             catch { }
             return "";
+        }
+        public static string GetLocalIp()
+        {
+            foreach (IPAddress item in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
+            {
+                if (item.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    return item.ToString();
+            }
+            return "127.0.0.1";
         }
     }
 }

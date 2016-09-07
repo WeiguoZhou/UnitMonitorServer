@@ -22,29 +22,5 @@ namespace UnitMonitorServer.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#5#6机监控服务")]
-        public string ServerName {
-            get {
-                return ((string)(this["ServerName"]));
-            }
-            set {
-                this["ServerName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1904")]
-        public int Port {
-            get {
-                return ((int)(this["Port"]));
-            }
-            set {
-                this["Port"] = value;
-            }
-        }
     }
 }

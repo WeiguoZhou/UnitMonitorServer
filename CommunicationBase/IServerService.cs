@@ -28,7 +28,10 @@ namespace UnitMonitorCommunication
         [OperationContract]
         [WebInvoke(UriTemplate = "ServiceName")]
         string ServiceName();
-
+        //测试嗠端是否在线
+        [OperationContract]
+        [WebInvoke(UriTemplate = "TestOnline")]
+        bool TestOnline();
         [OperationContract]
         [WebGet(UriTemplate = "AllTasks")]
         List<TaskInfo> AllTasks();

@@ -9,159 +9,105 @@ namespace UnitMonitorCommon
 {
   public static  class TaskBoolExtensions
     {
-        public static bool BoolTdOn(this TaskBase task,string pointAlias,int tdOnSec,bool outputAlarm=true)
+        /// <summary>
+        /// 开关量由0变1时延迟指定时间后输出报警
+        /// 相关参数从点的配置中读取，点的AllowAlarm属性可屏蔽此算法
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool BoolTdOn(this Point point,string key="")
         {
-            bool returnValue = false;
-            string preKey = pointAlias + "_BoolTdOn_" + tdOnSec.ToString();
-
-            bool value = task.BoolValue(pointAlias);
-            if (value)
+            if (!point.AllowAlarm || !point.Value.HasValue)
+                return false;
+            int tdOnSec= Convert.ToInt32(point.GetParamSetting(ParamSetting.OnTimeDelay));
+            string alarmString = point.GetParamSetting(ParamSetting.OnDelayAlarm);
+            if (point.TdOn(point.BoolValue.Value, tdOnSec, key))
             {
- 
-                string alarmStateKey = preKey + "_AlarmState";
-                if(!task.TempValue.ContainsKey(alarmStateKey))
+                if (!string.IsNullOrEmpty(alarmString))
+                    point.SendMessage(MessageType.Alarm, alarmString);
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 开关量由1变0时延迟指定时间后输出报警
+        /// 相关参数从点的配置中读取，点的AllowAlarm属性可屏蔽此算法
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool BoolTdOff(this Point point, string key = "")
+        {
+            if (!point.AllowAlarm || !point.Value.HasValue)
+                return false;
+            int tdOnSec = Convert.ToInt32(point.GetParamSetting(ParamSetting.OffTimeDelay));
+            string alarmString = point.GetParamSetting(ParamSetting.OffDelayAlarm);
+            if (point.TdOn(!point.BoolValue.Value, tdOnSec, key))
+            {
+                if (!string.IsNullOrEmpty(alarmString))
+                    point.SendMessage(MessageType.Alarm, alarmString);
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 开关量由1变0时输出true
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static bool BoolNewOff(this Point point)
+        {
+            if (!point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
+            return ((point.Value != point.OldValue) && (point.Value == 0));
+        }
+        /// <summary>
+        /// 开关量由0变1时输出true
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static bool BoolNewOn(this Point point)
+        {
+            if (!point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
+            return ((point.Value != point.OldValue) && (point.Value == 1));
+        }
+        /// <summary>
+        /// 开关量值发生变化时输出报警
+        /// 此算法根据点的AlarmString作不同的监视，当有onAlarmString时监视由0变1，当有offAlarmString时监视由1变0，当都有时都监视
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static bool BoolChanged(this Point point)
+        {
+            if (!point.AllowAlarm || !point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
+            if (point.Value != point.OldValue)
+            {
+                string alarmString = "";
+                if (point.BoolValue.Value)
                 {
-                   string beginTimeKey = preKey + "_BeginTime";
-                   DateTime currentTime = TasksContainer.Instance.CurrentTime;
-                    if (!task.TempValue.ContainsKey(beginTimeKey))
-                        task.TempValue.Add(beginTimeKey, currentTime);
-                    DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
-                    //如果已达报警延时时间，则报警
-                    if (beginTime.AddSeconds(tdOnSec) <= currentTime)
+                    alarmString= point.GetParamSetting(ParamSetting.ChangedOnAlarm);
+                    if (!string.IsNullOrEmpty(alarmString))
                     {
-                        task.TempValue.Add(alarmStateKey, 1);
-                        returnValue = true;
-                        if (outputAlarm)
-                        {
-                            int continueCount = Convert.ToInt32(CommUtil.TimeSecondSpan(beginTime, currentTime));
-                            task.SendMessge(MessageType.Alarm, string.Format("{0}投入超{1}", task.PointNameDescription(pointAlias), continueCount));
-
-                        }
+                        point.SendMessage(MessageType.Alarm, alarmString);
+                        return true;
                     }
                 }
- 
-            }
-            else
-            {
-                task.RemoveRelatedKey(preKey);
-            }
-            return returnValue;
-        }
-
-        public static bool BoolTdOff(this TaskBase task, string pointAlias, int tdOffSec, bool outputAlarm=true)
-        {
-            bool returnValue = false;
-            string preKey = pointAlias + "_BoolTdOff_" + tdOffSec.ToString();
-
-            bool value = task.BoolValue(pointAlias);
-            if (!value)
-            {
-
-                string alarmStateKey = preKey + "_AlarmState";
-                if (!task.TempValue.ContainsKey(alarmStateKey))
+                else
                 {
-                    string beginTimeKey = preKey + "_BeginTime";
-                    DateTime currentTime = TasksContainer.Instance.CurrentTime;
-                    if (!task.TempValue.ContainsKey(beginTimeKey))
-                        task.TempValue.Add(beginTimeKey, currentTime);
-                    DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
-                    //如果已达报警延时时间，则报警
-                    if (beginTime.AddSeconds(tdOffSec) <= currentTime)
+                    alarmString = point.GetParamSetting(ParamSetting.ChangedOffAlarm);
+                    if (!string.IsNullOrEmpty(alarmString))
                     {
-                        task.TempValue.Add(alarmStateKey, 1);
-                        returnValue = true;
-                        if (outputAlarm)
-                        {
-                            int continueCount = Convert.ToInt32(CommUtil.TimeSecondSpan(beginTime, currentTime));
-                            task.SendMessge(MessageType.Alarm, string.Format("{0}退出超{1}", task.PointNameDescription(pointAlias), continueCount));
-
-                        }
+                        point.SendMessage(MessageType.Alarm, alarmString);
+                        return true;
                     }
                 }
-
             }
-            else
-            {
-                task.RemoveRelatedKey(preKey);
-            }
-            return returnValue;
+          
+            return false;
         }
-
-        /// <summary>
-        /// 开关量首次由0变1时输出true(上升沿)，此后输出false，直到变0后复位报警信号才能再次起作用
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias"></param>
-        /// <param name="preKey"></param>
-        /// <returns></returns>
-        public static bool RisingEdge(this TaskBase task, string pointAlias, string preKey = "")
-        {
-            bool returnValue = false;
-            if (preKey == "")
-                preKey = pointAlias + "_RisingEdge";
-            string alarmStateKey = preKey + "_AlarmState";
-            if (task.BoolValue(pointAlias))
-            {
-                if (!task.TempValue.ContainsKey(alarmStateKey))
-                {
-                    task.TempValue.Add(alarmStateKey, 1);
-                    if (task.RunCount > 0)
-                        returnValue = true;
-                }
-            }
-            else
-            {
-                task.TempValue.Remove(alarmStateKey);
-            }
-            return returnValue;
-        }
-        /// <summary>
-        /// 开关量首次由1变0时输出true(下降沿)，此后输出false，直到变1后复位报警信号才能再次起作用
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias"></param>
-       /// <param name="preKey"></param>
-        /// <returns></returns>
-        public static bool TrailingEdge(this TaskBase task, string pointAlias,string preKey="")
-        {
-            bool returnValue = false;
-            if (preKey == "")
-                preKey = pointAlias + "_TrailingEdge";
-            string alarmStateKey = preKey + "_AlarmState";
-            if (!task.BoolValue(pointAlias))
-            {
-                if (!task.TempValue.ContainsKey(alarmStateKey))
-                {
-                    task.TempValue.Add(alarmStateKey, 1);
-                    if(task.RunCount>0)
-                        returnValue = true;
-                }
-            }
-            else
-            {
-                task.TempValue.Remove(alarmStateKey);
-            }
-            return returnValue;
-        }
-        /// <summary>
-        /// 切手动报警
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias"></param>
-        /// <param name="outputAlarm"></param>
-        /// <returns></returns>
-        public static bool ToMan(this TaskBase task, string pointAlias,bool outputAlarm=true)
-        {
-            bool returnValue = false;
-
-            if (TrailingEdge(task, pointAlias, pointAlias +"_ToMan"))
-            {
-                returnValue = true;
-                if (outputAlarm)
-                    task.SendMessge(MessageType.Alarm, string.Format("{0}切手动"));
-            }
-            return returnValue;
-
-        }
+ 
     }
 }

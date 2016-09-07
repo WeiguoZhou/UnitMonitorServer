@@ -18,24 +18,11 @@ namespace UnitMonitorCommunication
         [DataMember]
         public bool IsRunning { set; get; }
         [DataMember]
-        public DateTime LastSuccessTime { set; get; }
-        [DataMember]
         public DateTime BeginTime { set; get; }
         [DataMember]
         public int RunCount { set; get; }
         [DataMember]
         public int Period { set; get; }
-        public double LastSpendTime {  set; get; }
-        [DataMember]
-        public bool LastSuccess {  set; get; }
-        [DataMember]
-
-        public int SuccessCount {  set; get; }
-        [DataMember]
-        public int PersistantSuccess {  set; get; }
-        [DataMember]
-        public int PersistantFail { set; get; }
-        [DataMember]
-        public int FailCount { set; get; }
+  
     }
 }

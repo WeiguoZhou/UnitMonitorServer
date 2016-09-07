@@ -14,8 +14,7 @@ namespace UnitMonitorCommon
 {
     public class TasksContainer : BindingList<TaskBase>, IDisposable
     {
-        //保存任务模块的共享设置，因为一个任务模块可能有多个任务，指向相同的共享设置可减少内存和加快加载速度
-        Dictionary<string, XmlDocument> SharedConfigs;
+        private static string localIP;
         static TasksContainer instance;
         //任务容器是否正在处理任务，防止运算时间太长导致一个周期还未完成下个周期又开始了。
         bool isbusy = false;
@@ -27,7 +26,17 @@ namespace UnitMonitorCommon
         //默认值是5秒
         int period = 5;
         //运行模式，分为实时模式、调试模式、历史模式
-        DataMode mode = DataMode.RealTime;
+        //TODO:在开发阶段先放在调试模式，正式发布时放实时模式
+        DataMode mode = DataMode.Debug;
+
+        /// <summary>
+        /// 当任务被添加到任务容器时发生
+        /// </summary>
+        public event EventHandler TaskAdded;
+        /// <summary>
+        /// 当任务从任务容器中移除时发生
+        /// </summary>
+        public event EventHandler TaskRemoved;
         //任务容器运行成功完成后引发的事件
         public event EventHandler RunComplete;
         //任务容器开始启动引发的事件
@@ -36,7 +45,7 @@ namespace UnitMonitorCommon
         public event EventHandler StopRun;
         //任务容器在实时模式中取数失败引发的事件。
         public event ExceptionEventHandler GetRtValueFailed;
-        public event ExceptionEventHandler TaskExecuteErr;
+        
         /// <summary>
         /// 任务容器的实例引用
         /// </summary>
@@ -45,7 +54,7 @@ namespace UnitMonitorCommon
             get
             {
                 return instance;
-
+                
             }
 
         }
@@ -58,6 +67,18 @@ namespace UnitMonitorCommon
             {
                 instance = new TasksContainer();
 
+            }
+        }
+        /// <summary>
+        /// 本机IP 地址
+        /// </summary>
+        public static string LocalIP
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(localIP))
+                    localIP = CommUtil.GetLocalIp();
+                return localIP;
             }
         }
         /// <summary>
@@ -89,20 +110,25 @@ namespace UnitMonitorCommon
             }
         }
         /// <summary>
-        /// 表示运行的当前时间
+        /// 表示运行的当前时间，历史模式中为历史时刻，其它模式都表示现在时刻
         /// </summary>
         public DateTime CurrentTime
         {
-            set; get;
+          private  set; get;
         }
+        /// <summary>
+        /// 从开始运行后以来的秒数
+        /// 在任务中多采用此值进行时间计算，这样我临时数据可统一采用double保存，避免装拆箱操作
+        /// </summary>
+        public double CurrentTotalSeconds { private set; get; }
         /// <summary>
         /// 任务容器启动的开始时间，在历史模式中为历史开始时间
         /// </summary>
-        public DateTime BeginTime { set; get; }
+        public DateTime BeginTime {private  set; get; }
         /// <summary>
         /// 在历史模式中表示运行结束的时间
         /// </summary>
-        public DateTime HistoryEndTime { set; get; }
+        public DateTime HistoryEndTime {private  set; get; }
         /// <summary>
         /// 上次运行花费的时间
         /// </summary>
@@ -130,6 +156,7 @@ namespace UnitMonitorCommon
         }
         /// <summary>
         /// 查找任务容器中是否含有指定名称的任务
+        /// 指向同一配置文件就认为是同一任务
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -163,7 +190,19 @@ namespace UnitMonitorCommon
 
         }
         /// <summary>
-        /// 调试模式时必须执行此方法执行
+        /// 用于启动历史模式
+        /// </summary>
+        /// <param name="historyBeginTime">历史开始时间</param>
+        /// <param name="historyEndTime">历史结束时间</param>
+        public void StartHistory(DateTime historyBeginTime,DateTime historyEndTime)
+        {
+            this.BeginTime = historyBeginTime;
+            this.HistoryEndTime = historyEndTime;
+            this.mode = DataMode.History;
+            Start();
+        }
+        /// <summary>
+        /// 调试模式时启动后必须执行此方法单次执行
         /// </summary>
         public void StepRun()
         {
@@ -188,8 +227,9 @@ namespace UnitMonitorCommon
         }
         private TasksContainer()
         {
-            SharedConfigs = new Dictionary<string, XmlDocument>();
             Points = new List<string>();
+            //接下来我对Points的访问都是binarySearch，以下这步是否必须？
+            Points.Sort();
         }
         public void Dispose()
         {
@@ -197,75 +237,29 @@ namespace UnitMonitorCommon
                 timer.Dispose();
             timer = null;
         }
-        /// <summary>
-        /// 从配置文件中读取任务信息，用反射生成这个类的实例
-        /// </summary>
-        /// <param name="configFileName">配置文件名，放在Tasks目录下</param>
-        /// <returns></returns>
-        public static TaskBase LoadTask(FileInfo configFile)
-        {
-            //这里到底是用XmlDocument还是用Configuration很纠结
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(configFile.FullName);
+      
 
-                XmlNode taskInfo = doc.DocumentElement.SelectSingleNode("taskinfo");
-                if (taskInfo != null)
-                {
-                    Assembly assem = Assembly.Load(taskInfo.Attributes["assembly"].Value);
-                    TaskBase task = (TaskBase)assem.CreateInstance(taskInfo.Attributes["class"].Value);
-
-                    task.TaskName = configFile.Name.Replace(".config", "");
-                    task.Config = doc;
-                    task.ConfigFileInfo = configFile;
-                    string sharedConfigName = task.GetType().Name;
-                    task.SharedConfig = TasksContainer.Instance.GetSharedConfig(sharedConfigName);
-                    return task;
-                }
-            }
-            catch (Exception ex)
-            {
-                string message = string.Format("任务容器加载任务时出错。任务名称：{0}，错误消息{1}", configFile.Name, ex.Message);
-                Logger.Instance.LogDebug(message);
-            }
-            return null;
-
-        }
-        /// <summary>
-        /// 加载模块级的共享配置文件
-        /// </summary>
-        /// <param name="taskTypeName">任务模块名称</param>
-        /// <returns></returns>
-        private XmlDocument GetSharedConfig(string taskTypeName)
-        {
-            if (SharedConfigs.ContainsKey(taskTypeName))
-                return SharedConfigs[taskTypeName];
-            else
-            {
-                string fileFullname = Directory.GetCurrentDirectory() + "\\ModuleSettings\\" + taskTypeName + ".config";
-                if (!File.Exists(fileFullname))
-                    throw new Exception(string.Format("名为{0}的模块配置文件不存在", taskTypeName));
-                XmlDocument doc = new XmlDocument();
-                doc.Load(fileFullname);
-                SharedConfigs.Add(taskTypeName, doc);
-                return doc;
-            }
-        }
-
-        public void AddTask(TaskBase task)
+        public  void AddTask(TaskBase task)
         {
             if (task == null)
                 return;
             if (this.FindTask(task.ConfigFileInfo.FullName) == null)
             {
-                task.BeginTime = this.CurrentTime;
                 this.Add(task);
-                task.RaiseTaskAdded();
+                //这里是不好的设计
+                //如果调用者直接调用this.Add(task)而不是AddTask（task)，此事件不会被引发
+                //加有BindingList的AddingNew事件，但那是在添加入之前，用它引发这个事件不好
+                if (TaskAdded != null)
+                    TaskAdded(task,null);
             }
 
         }
-
+        public void RemoveTask(TaskBase task)
+        {
+            this.Remove(task);
+            if (TaskRemoved != null)
+                TaskRemoved(task, null);
+        }
         public void RunTasks(object state)
         {
             //防止来不及处理
@@ -287,6 +281,7 @@ namespace UnitMonitorCommon
                 else
                     CurrentTime = DateTime.Now;
             }
+            CurrentTotalSeconds = (new TimeSpan(CurrentTime.Ticks - BeginTime.Ticks)).TotalSeconds;
             if (Mode == DataMode.History)
             {
                 if (CurrentTime >= HistoryEndTime)
@@ -300,7 +295,7 @@ namespace UnitMonitorCommon
             //任务在取数前做的一些工作，比如，设置某些点不用再取值
             foreach (TaskBase item in this)
             {
-                item.InternalPreRun();
+                item.InternalPreInit();
             }
             //实时模式时先将需要取值的点添加到points，然后再到edna中取值
             //7月28日更改，希望能减少访问edna的次数来提高性能。
@@ -308,21 +303,21 @@ namespace UnitMonitorCommon
             if (Mode == DataMode.RealTime)
             {
                 Points.Clear();
-                foreach (TaskBase item in this)
+                foreach (TaskBase task in this)
                 {
-                    if (item.RunRequired)
+                    if (task.RunRequired)
                     {
                         
-                        foreach (var point in item.Points)
+                        foreach (var fun in task.FunGroups)
                         {
-                            if (point.Used)
+                            if (fun.Used)
                             {
-                                int index;
-                                //采用BinarySearch的方法是否能提高性能？
-                                if ((index = Points.BinarySearch(point.Id)) < 0)
+                                foreach (Point point in fun.Points)
                                 {
-                                    Points.Insert(~index, point.Id);
-                                }
+                                    int index= Points.BinarySearch(point.Id);
+                                    if (index < 0)
+                                        Points.Insert(~index, point.Id);
+                                }        
                             }
                         }
                     }
@@ -360,11 +355,7 @@ namespace UnitMonitorCommon
             ListChangedEventArgs args = new ListChangedEventArgs(ListChangedType.Reset, this.IndexOf(task));
             this.OnListChanged(args);
         }
-        public void RaiseTaskExecuteErr(TaskBase task,Exception ex)
-        {
-            if (TaskExecuteErr != null)
-                TaskExecuteErr(task, ex);
-        }
+
         public void RaiseGetRtValueFailed(Exception ex)
         {
             if (GetRtValueFailed != null)
@@ -372,5 +363,45 @@ namespace UnitMonitorCommon
                 GetRtValueFailed(this, ex);
             }
         }
+        /// <summary>
+        /// 自动加载所有任务并启动任务容器
+        /// </summary>
+        public void LoadTasks()
+        {
+            string fullPath = Directory.GetCurrentDirectory() + "\\" + "Tasks";
+            if (!Directory.Exists(fullPath))
+                Directory.CreateDirectory(fullPath);
+            DirectoryInfo dir = new DirectoryInfo(fullPath);
+            List<FileInfo> list = new List<FileInfo>();
+            GetSubTaskConfigFiles(list, dir);
+
+            foreach (var item in list)
+            {
+                TaskBase task = TaskBase.LoadTask(item);
+                if (task != null)
+                {
+                    this.AddTask(task);
+                }
+            }
+            this.Start();
+        }
+        private void GetSubTaskConfigFiles(List<FileInfo> list,DirectoryInfo dir)
+        {
+            
+            foreach (var item in dir.GetFiles())
+            {
+                if (item.Extension.ToLower().Contains("task"))
+                {
+                    list.Add(item);
+                }
+
+            }
+            foreach (var item in dir.GetDirectories())
+            {
+                GetSubTaskConfigFiles(list, item);
+            }
+            
+        }
     }
+    public delegate void ExceptionEventHandler(object sender,Exception ex);
 }

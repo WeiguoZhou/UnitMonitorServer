@@ -7,353 +7,489 @@ using UnitMonitorCommunication;
 
 namespace UnitMonitorCommon
 {
-  public static  class TaskAnalogExtensions
+    public static class TaskAnalogExtensions
     {
         /// <summary>
-        /// 模拟量值低 延时报警
+        /// 模拟量点低延时报警
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">模拟量点的别名</param>
-        /// <param name="lValue">低设定值</param>
+        /// <param name="point"></param>
+        /// <param name="lValue">低报警值</param>
         /// <param name="tdOnSec">延时时间</param>
-        /// <param name="outputAlarm">是否输出报警，默认为true</param>
-        /// <returns>是否有报警</returns>
-        public static bool AnalogLTdOn(this TaskBase task,string pointAlias,double lValue,int tdOnSec,bool outputAlarm=true)
+        /// <param name="outputAlarm">是否输出报警，可选，默认为true</param>
+        /// <param name="key">临时数据键值前缀</param>
+        /// <returns></returns>
+        public static bool AnalogLTdOn(this Point point, double lValue, int tdOnSec, bool outputAlarm = true, string key = "")
         {
-            bool returnValue = false;
-            double value = task.AnalogValue(pointAlias);
-            //加这么长的前缀考虑当一个模拟量用了多个同一function时会冲突
-            string preKey = pointAlias + "_AnalogLTdOn_" + lValue.ToString() + "_" + tdOnSec.ToString();
-            if(TaskExtensions.CanTdOn(task,value<lValue,tdOnSec,preKey))
+            if (!point.Value.HasValue)
+                return false;
+            double value = point.Value.Value;
+            string preKey = string.IsNullOrEmpty(key) ? "AnalogLTdOn" : key + "_AnalogLTdOn";
+            if (TaskExtensions.TdOnPulse(point, value < lValue, tdOnSec, preKey))
             {
-                returnValue = true;
+
                 if (outputAlarm)
                 {
-                    string beginTimeKey = preKey + "_BeginTime";
-                    DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
-                    DateTime currentTime = TasksContainer.Instance.CurrentTime;
-                    int continueCount = Convert.ToInt32(CommUtil.TimeSecondSpan(beginTime, currentTime));
-                    task.SendMessge(MessageType.Alarm, string.Format("{0}小于{1},持续{2}", task.PointNameDescription(pointAlias), lValue, continueCount));
+
+                    point.SendMessage(MessageType.Alarm, string.Format("{0}小于{1},持续{2}秒以上时间", point.Description, lValue, tdOnSec));
                 }
+                return true;
             }
+            return false;
+        }
+        /// <summary>
+        /// 模拟量点低延时报警
+        /// 相关参数从模拟量点的配置中读取，模拟量点的AllowAlarm属性可屏蔽此算法
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static bool AnalogLTdOn(this Point point)
+        {
+            if (!point.AllowAlarm || !point.Value.HasValue)
+                return false;
+            double lValue = Convert.ToDouble(point.GetParamSetting(ParamSetting.LowValue));
+            int tdOnSec = Convert.ToInt32(point.GetParamSetting(ParamSetting.LowValueTimeDelay));
+            //当设置alarmString时，会屏蔽函数默认的输出
+            string alarmString = point.GetParamSetting(ParamSetting.LowAlarm);
+            bool outputAlarm = (string.IsNullOrEmpty(alarmString));
+            bool returnValue = TaskAnalogExtensions.AnalogLTdOn(point, lValue, tdOnSec, outputAlarm);
+            if (returnValue && !outputAlarm)
+                point.SendMessage(MessageType.Alarm, alarmString);
             return returnValue;
-         }
+        }
         /// <summary>
         /// 模拟量高延时报警
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">模拟量点的别名</param>
+        /// <param name="point">模拟量点</param>
         /// <param name="hValue">高报警值</param>
-        /// <param name="tdOnSec">延迟时间</param>
-        /// <param name="outputAlarm">是否输出报警，默认为true</param>
-        /// <returns>是否有报警</returns>
-        public static bool AnalogHTdOn(this TaskBase task, string pointAlias, double hValue, int tdOnSec,bool outputAlarm=true)
+        /// <param name="tdOnSec">延时时间</param>
+        /// <param name="outputAlarm">是否输出报警，可选，默认为true</param>
+        /// <param name="key">临时数据键值前缀，可选</param>
+        /// <returns></returns>
+        public static bool AnalogHTdOn(this Point point, double hValue, int tdOnSec, bool outputAlarm = true, string key = "")
         {
-            bool returnValue = false;
-            double value = task.AnalogValue(pointAlias);
-            //加这么长的前缀考虑当一个模拟量用了多个同一function时会冲突
-            string preKey = pointAlias + "_AnalogLTdOn_" + hValue.ToString() + "_" + tdOnSec.ToString();
-            if (TaskExtensions.CanTdOn(task, value>hValue, tdOnSec, preKey))
+            if (!point.Value.HasValue)
+                return false;
+            double value = point.Value.Value;
+            string preKey = string.IsNullOrEmpty(key) ? "AnalogLTdOn" : key + "_AnalogLTdOn";
+            if (TaskExtensions.TdOnPulse(point, value > hValue, tdOnSec, preKey))
             {
-                returnValue = true;
                 if (outputAlarm)
                 {
-                    string beginTimeKey = preKey + "_BeginTime";
-                    DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
-                    DateTime currentTime = TasksContainer.Instance.CurrentTime;
-                    int continueCount = Convert.ToInt32(CommUtil.TimeSecondSpan(beginTime, currentTime));
-                    task.SendMessge(MessageType.Alarm, string.Format("{0}小于{1},持续{2}", task.PointNameDescription(pointAlias), hValue, continueCount));
+
+                    point.SendMessage(MessageType.Alarm, string.Format("{0}大于{1},持续{2}秒以上时间", point.Description, hValue, tdOnSec));
                 }
+                return true;
             }
-            return returnValue;
+            return false;
         }
-    
-    
         /// <summary>
-        /// 模拟量高低延时报警
+        /// 模拟量点高延时报警
+        /// 相关参数从模拟量点的配置中读取，模拟量点的AllowAlarm属性可屏蔽此算法
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">模拟量点的别名</param>
-        /// <param name="hValue">高报警值</param>
-        /// <param name="lValue">低报警值</param>
-        /// <param name="tdOnSec">延迟时间</param>
-        /// <param name="outputAlarm">是否输出报警，默认为true</param>
-        /// <returns>是否有报警</returns>
-        public static bool AnalogTdOnHL(this TaskBase task, string pointAlias, double hValue, double lValue, int tdOnSec,bool outputAlarm=true)
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static bool AnalogHTdOn(this Point point)
         {
-            bool returnValue = false;
-            if(AnalogHTdOn( task,  pointAlias,  hValue,  tdOnSec,outputAlarm))
-                returnValue = true;
-            if(AnalogLTdOn(task, pointAlias, lValue, tdOnSec,outputAlarm))
-                returnValue = true;
+            if (!point.AllowAlarm || !point.Value.HasValue)
+                return false;
+            double hValue = Convert.ToDouble(point.GetParamSetting(ParamSetting.HighValue));
+            int tdOnSec = Convert.ToInt32(point.GetParamSetting(ParamSetting.HighValueTimeDelay));
+            string alarmString = point.GetParamSetting(ParamSetting.HighAlarm);
+            bool outputAlarm = (string.IsNullOrEmpty(alarmString));
+            bool returnValue = TaskAnalogExtensions.AnalogHTdOn(point, hValue, tdOnSec, outputAlarm);
+            if (returnValue && !outputAlarm)
+                point.SendMessage(MessageType.Alarm, alarmString);
             return returnValue;
+
         }
 
         /// <summary>
-        /// 模拟量变化幅度低报警,用于检查调门有没有卡死，测点有没有死掉
+        /// 模拟量高低值延时报警,优先检查高报，如果有高报就不再检查低报
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">模拟量点的别名</param>
-        /// <param name="clValue">模拟量变化幅度设定值</param>
-        /// <param name="tdOnSec">延迟时间</param>
-        /// <param name="outputAlarm">是否输出报警，默认为true</param>
-        /// <returns>是否有报警</returns>
-        public static bool AnalogChangeLTdOn(this TaskBase task, string pointAlias, double clValue, int tdOnSec,bool outputAlarm=true)
+        /// <param name="point">模拟量点</param>
+        /// <param name="hValue">高报值</param>
+        /// <param name="lValue">低报值</param>
+        /// <param name="tdOnSec">延时时间</param>
+        /// <param name="outputAlarm">是否输出报警，可选，默认为true</param>
+        /// <param name="key">临时数据键值前缀，可选</param>
+        /// <returns></returns>
+        public static bool AnalogTdOnHL(Point point, double hValue, double lValue, int tdOnSec, bool outputAlarm = true, string key = "")
         {
+
+            if (AnalogHTdOn(point, hValue, tdOnSec, outputAlarm, key))
+                return true;
+            else
+                return AnalogLTdOn(point, lValue, tdOnSec, outputAlarm, key);
+
+        }
+        /// <summary>
+        /// 模拟量高低值延时报警。
+        /// 相关参数从模拟量点的配置中读取，模拟量点的AllowAlarm属性可屏蔽此算法
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static bool AnalogTdOnHL(Point point)
+        {
+            if (!point.AllowAlarm)
+                return false;
+            return (AnalogHTdOn(point) | AnalogLTdOn(point));
+        }
+        /// <summary>
+        /// 模拟量变化幅度小于一定值，延时一段时间后报警
+        /// </summary>
+        /// <param name="point">模拟量点</param>
+        /// <param name="clValue">变化幅度低报警值</param>
+        /// <param name="tdOnSec">延时时间</param>
+        /// <param name="outputAlarm">是否输出报警，可选，默认为true</param>
+        /// <param name="key">临时数据键值前缀，可选</param>
+        /// <returns></returns>
+        public static bool AnalogChangeLTdOn(this Point point, double clValue, int tdOnSec, bool outputAlarm = true, string key = "")
+        {
+            if (!point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
             bool returnValue = false;
-            string preKey = pointAlias + "_AnalogChangeLTdOn_" + clValue.ToString() + "_" + tdOnSec.ToString();
-            double value = task.AnalogValue(pointAlias);
-            string oldValueKey = preKey + "_OldValue";
-            //没旧数据键值，表示第一次取数据
-            if (!task.TempValue.ContainsKey(oldValueKey))
+            string preKey = string.IsNullOrEmpty(key) ? "AnalogChangeLTdOn" : key + "_AnalogChangeLTdOn";
+            double value = point.Value.Value;
+            double oldValue = point.OldValue.Value;
+
+            returnValue = TaskExtensions.TdOnPulse(point, Math.Abs(oldValue - value) < clValue, tdOnSec, preKey);
+            if (returnValue && outputAlarm)
             {
-                task.TempValue.Add(oldValueKey, value);
+
+                point.SendMessage(MessageType.Alarm, string.Format("{0}变化幅度低于{1},持续{2}秒以上时间", point.Description, clValue, tdOnSec));
+
             }
+
+
+            return returnValue;
+        }
+        /// <summary>
+        /// 模拟量变化幅度小于一定值，延时一段时间后报警。
+        /// 相关参数从模拟量点的配置中读取，模拟量点的AllowAlarm属性可屏蔽此算法
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="outputAlarm"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool AnalogChangeLTdOn(this Point point)
+        {
+            if (!point.AllowAlarm)
+                return false;
+            double clValue = Convert.ToDouble(point.GetParamSetting(ParamSetting.ChangeLowValue));
+            int tdOnSec = Convert.ToInt32(point.GetParamSetting(ParamSetting.ChangeLowTimeDelay));
+            string alarmString = point.GetParamSetting(ParamSetting.ChangeLowAlarm);
+            bool outputAlarm = string.IsNullOrEmpty(alarmString);
+            bool returnValue = AnalogChangeLTdOn(point, clValue, tdOnSec, outputAlarm);
+            if (returnValue && !outputAlarm)
+                point.SendMessage(MessageType.Alarm, alarmString);
+            return returnValue;
+        }
+        /// <summary>
+        ///模拟量变化幅度高报警
+        /// 此算法按统计周期循环计算，当发现最大值与最小值的差值达到一定幅度时报警
+        /// 适用于平时比较稳定的值
+        /// </summary>
+        /// <param name="point">模拟量点</param>
+        /// <param name="chValue">高报警值</param>
+        /// <param name="statisticsSec">统计周期</param>
+        /// <param name="outputAlarm">是否输出报警，可选，默认为true</param>
+        /// <param name="key">临时数据键值前缀，可选</param>
+        /// <returns></returns>
+
+        public static bool AnalogChangeH(this Point point, double chValue, int statisticsSec, bool outputAlarm = true, string key = "")
+        {
+            if (!point.Value.HasValue)
+                return false;
+            bool returnValue = false;
+            string preKey = string.IsNullOrEmpty(key) ? "AnalogChangeH" : key + "_AnalogChangeH";
+            string statisticsBeginTimeKey = preKey + "_StatisticsBeginTime";
+            double currentTime = TasksContainer.Instance.CurrentTotalSeconds;
+            double statisticsBeginTime;
+            //如果没有在临时数据中找到统计开始时间，则设置
+            if (!point.TryGetTempValue(statisticsBeginTimeKey, out statisticsBeginTime))
+                point.SetTempValue(statisticsBeginTimeKey, currentTime);
             else
             {
-                double oldValue = (double)task.TempValue[oldValueKey];
-                returnValue = TaskExtensions.CanTdOn(task, Math.Abs(oldValue - value) < clValue, tdOnSec, preKey);
-                if(returnValue && outputAlarm)
+                //统计周期结束，删除键值，开始下一周期的运算
+                if ((statisticsBeginTime + statisticsSec) <= currentTime)
                 {
-                    DateTime currentTime = TasksContainer.Instance.CurrentTime;
-                    string beginTimeKey = preKey + "_BeginTime";
-                    DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
-                    int continueCount = Convert.ToInt32(CommUtil.TimeSecondSpan(beginTime, currentTime));
-                    task.SendMessge(MessageType.Alarm, string.Format("{0}变化幅度低于{1},持续{2}", task.PointNameDescription(pointAlias), clValue, continueCount));
+                    point.RemoveRelatedTempValue(preKey);
+                }
+                else
+                {
+                    double value = point.Value.Value;
+                    string maxValueKey = preKey + "_MaxValue";
+                    string minValueKey = preKey + "_MinValue";
+                    double maxValue;
+                    double minValue;
+                    //没旧数据键值，表示第一次取数据
+                    if (!point.TryGetTempValue(maxValueKey, out maxValue))
+                    {
+                        maxValue = value;
+                        point.SetTempValue(maxValueKey, value);
+                    }
+                    if (!point.TryGetTempValue(minValueKey, out minValue))
+                    {
+                        minValue = value;
+                        point.SetTempValue(minValueKey, value);
+                    }
 
+                    string alarmStateKey = preKey + "_AlarmState";
+                    //如果统计周期内发现最大值和最小值之差大于设定值，则发报警
+                    if ((maxValue - minValue) >= chValue)
+                    {
+                        if (!point.ContainsTempValue(alarmStateKey))
+                        {
+                            point.SetTempValue(alarmStateKey, 1);
+                            returnValue = true;
+                            if (outputAlarm)
+                                point.SendMessage(MessageType.Alarm, string.Format("{0}在{1}秒内变化幅度大于{2}", point.Description, statisticsSec, chValue));
+                        }
+                    }
                 }
             }
-          
+
+
+
             return returnValue;
         }
         /// <summary>
         /// 模拟量变化幅度高报警
         /// 此算法按统计周期循环计算，当发现最大值与最小值的差值达到一定幅度时报警
+        ///相关参数从模拟量点的配置中读取，模拟量点的AllowAlarm属性可屏蔽此算法
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">模拟量点的别名</param>
-        /// <param name="chValue">模拟量变化幅度高设定值</param>
-        /// <param name="statisticsSec">统计周期</param>
-        /// <param name="outputAlarm">是否输出报警，默认为true</param>
-        /// <returns>是否有报警</returns>
-
-        public static bool AnalogChangeH(this TaskBase task, string pointAlias, double chValue, int statisticsSec,bool outputAlarm=true)
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static bool AnalogChangeH(this Point point)
         {
-            bool returnValue = false;
-            string preKey = pointAlias + "_AnalogChangeH_" + chValue.ToString() + "_" + statisticsSec.ToString();
-            string statisticsBeginTimeKey = preKey + "_StatisticsBeginTime";
-            DateTime currentTime = TasksContainer.Instance.CurrentTime;
-            if (!task.TempValue.ContainsKey(statisticsBeginTimeKey))
-                task.TempValue.Add(statisticsBeginTimeKey, currentTime);
-            DateTime statisticsBeginTime = (DateTime)task.TempValue[statisticsBeginTimeKey];
-            //如果小于，表示一个统计周期结束,清除所有临时数据
-            if(statisticsBeginTime.AddSeconds(statisticsSec)<= currentTime)
+            if (!point.AllowAlarm)
+                return false;
+            double chValue = Convert.ToDouble(point.GetParamSetting(ParamSetting.ChangeHighValue));
+            int statisticsSec = Convert.ToInt32(point.GetParamSetting(ParamSetting.ChangeHighStatisticsPeriod));
+            string alarmString = point.GetParamSetting(ParamSetting.ChangeHighAlarm);
+            bool outputAlarm = string.IsNullOrEmpty(alarmString);
+            bool returnValue = AnalogChangeH(point, chValue, statisticsSec, outputAlarm);
+            if (returnValue && !outputAlarm)
+                point.SendMessage(MessageType.Alarm, alarmString);
+            return returnValue;
+        }
+        /// <summary>
+        /// 此算法连续监视上次的值和本次的值的差值，如果达到高设定值时输出报警
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="chValue">变化幅度高设定值</param>
+        /// <param name="outputAlarm"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool AnalogChangeConsecutiveH(this Point point, double chValue, bool outputAlarm = true)
+        {
+            if (!point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
+
+            if (Math.Abs(point.Value.Value - point.OldValue.Value) > chValue)
             {
-                task.RemoveRelatedKey( preKey);
+                if (outputAlarm)
+                    point.SendMessage(MessageType.Alarm, string.Format("{0}变化幅度大于{1}", point.Description, chValue));
+                return true;
             }
+            return false;
+        }
+        /// <summary>
+        /// 模拟量变化幅度高报警
+        /// 此算法在一定的统计周期内监视上次的值和本次的值变化幅度超限的次数，当达到指定的次数时输出报警
+        /// </summary>
+        /// <param name="point">模拟量点</param>
+        /// <param name="chValue">变化幅度高限设定值</param>
+        /// <param name="chCount">超限次数设定值</param>
+        /// <param name="statisticsSec">统计周期（秒）</param>
+        /// <param name="outputAlarm"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool AnalogChangeConsecutiveH(this Point point, double chValue, int chCount, int statisticsSec, bool outputAlarm = true, string key = "")
+        {
+            if (!point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
+            bool returnValue = false;
+            string preKey = string.IsNullOrEmpty(key) ? "AnalogChangeConsecutiveH" : key + "_AnalogChangeConsecutiveH";
+            string statisticsBeginTimeKey = preKey + "_StatisticsBeginTime";
+            double currentTime = TasksContainer.Instance.CurrentTotalSeconds;
+            double statisticsBeginTime;
+            //如果临时数据中无开始时间值，表示尚未开始
+            if (!point.TryGetTempValue(statisticsBeginTimeKey, out statisticsBeginTime))
+                point.SetTempValue(statisticsBeginTimeKey, currentTime);
             else
             {
-               double value = task.AnalogValue(pointAlias);
-                string maxValueKey = preKey + "_MaxValue";
-                string minValueKey = preKey + "_MinValue";
-                //没旧数据键值，表示第一次取数据
-                if (!task.TempValue.ContainsKey(maxValueKey))
-                    task.TempValue.Add(maxValueKey, value);
-                if (!task.TempValue.ContainsKey(minValueKey))
-                    task.TempValue.Add(minValueKey, value);
-
-                double maxValue = (double)task.TempValue[maxValueKey];
-                double minValue = (double)task.TempValue[minValueKey];
-                if (value > maxValue)
-                    task.TempValue[maxValueKey] = value;
-                if (value< minValue)
-                    task.TempValue[minValueKey] = value;
-
-                string alarmStateKey = preKey + "_AlarmState";
-
-                if ((maxValue - minValue) >= chValue)
+                if ((currentTime - statisticsBeginTime) > statisticsSec)
                 {
-                    if (!task.TempValue.ContainsKey(alarmStateKey))
+                    //已过本次统计周期，删除相关数据，开始下一统计周期
+                    point.RemoveRelatedTempValue(preKey);
+                    point.SetTempValue(statisticsBeginTimeKey, currentTime);
+                }
+                else
+                {
+                    //检查本次变化幅度是否超限
+                    bool thisHigh = AnalogChangeConsecutiveH(point, chValue, false);
+
+                    if (thisHigh)
                     {
-                        task.TempValue.Add(alarmStateKey, 1);
-                        returnValue = true;
-                        if(outputAlarm)
-                            task.SendMessge(MessageType.Alarm, string.Format("{0}在{1}秒内变化幅度大于{2}", task.PointNameDescription(pointAlias), statisticsSec, chValue));
-                    }   
+                        //如果超限，读取之前的超限统计次数
+                        string countKey = preKey + "_ChangeHighCount";
+                        double count;
+                        if (!point.TryGetTempValue(countKey, out count))
+                            //如果之前没有就添加到临时数据
+                            point.SetTempValue(countKey, 1);
+                        else
+                        {
+                            point.SetTempValue(countKey, count + 1);
+                            //检查增加一次后有没有达到报警条件，达到就输出报警
+                            //仅在相等的那一次输出报警，防止频繁发报警
+                            if ((count + 1) == chCount)
+                            {
+                                returnValue = true;
+                                if (outputAlarm)
+                                    point.SendMessage(MessageType.Alarm, string.Format("{0}变化幅度大(在{1}秒内变化幅度大于{2}达{3}次）", point.Description, statisticsSec, chValue, chCount));
+
+                            }
+                        }
+
+
+                    }
+
                 }
             }
- 
+            return returnValue;
+        }
+        /// <summary>
+        /// 模拟量变化幅度高报警
+        /// 此算法在一定的统计周期内监视上次的值和本次的值变化幅度超限的次数，当达到指定的次数时输出报警
+        ///相关参数从模拟量点的配置中读取，模拟量点的AllowAlarm属性可屏蔽此算法
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="outputAlarm"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool AnalogChangeConsecutiveH(this Point point)
+        {
+            if (!point.AllowAlarm)
+                return false;
+            double chValue = Convert.ToDouble(point.GetParamSetting(ParamSetting.ChangeHighValue));
+            int chCount = Convert.ToInt32(point.GetParamSetting(ParamSetting.ChangeHighCount));
+            int statisticsSec = Convert.ToInt32(point.GetParamSetting(ParamSetting.ChangeHighStatisticsPeriod));
+            string alarmString = point.GetParamSetting(ParamSetting.ChangeHighAlarm);
+            bool outputAlarm = string.IsNullOrEmpty(alarmString);
+            bool returnValue= AnalogChangeConsecutiveH(point, chValue, chCount, statisticsSec, outputAlarm);
+            if (returnValue && !outputAlarm)
+                point.SendMessage(MessageType.Alarm, alarmString);
             return returnValue;
         }
         /// <summary>
         /// 模拟量点低报警（可复位）
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">模拟量点别名</param>
+        /// <param name="point">模拟量点</param>
         /// <param name="lValue">低报警值</param>
-        /// <param name="resetValue">低复位值</param>
-        /// <param name="outputAlarm">是否输出报警，默认为true</param>
-        /// <returns>是否有报警</returns>
-        public static bool AnalogL(this TaskBase task, string pointAlias, double lValue, double resetValue,bool outputAlarm=true)
+        /// <param name="resetValue">报警复位值</param>
+        /// <param name="outputAlarm">是否输出报警，可选，默认为true</param>
+        /// <param name="key">临时数据键值前缀，可选</param>
+        /// <returns></returns>
+        public static bool AnalogL(this Point point, double lValue, double resetValue, bool outputAlarm = true, string key = "")
         {
+            if (!point.Value.HasValue)
+                return false;
             bool returnValue = false;
-            string preKey = pointAlias + "_AnalogL_" + lValue.ToString();
-            double value = task.AnalogValue(pointAlias);
-            if (TaskAnalogExtensions.AnalogL(task, value, lValue, resetValue, preKey))
-            {
-                returnValue = true;
-                if(outputAlarm)
-                    task.SendMessge(MessageType.Alarm, string.Format("{0}小于{1}", task.PointNameDescription(pointAlias), lValue));
-            }
+            string preKey = string.IsNullOrEmpty(key) ? "AnalogL" : key + "_AnalogL";
+            double value = point.Value.Value;
+            returnValue = TaskExtensions.RSPulse(point, value < lValue, value > resetValue, preKey);
+
+            if (returnValue && outputAlarm)
+                point.SendMessage(MessageType.Alarm, string.Format("{0}小于{1}报警", point.Description, lValue));
+
             return returnValue;
         }
         /// <summary>
-        /// 模拟量高报警（可复位）
+        /// 模拟量点低报警（可复位）
+        ///相关参数从模拟量点的配置中读取，模拟量点的AllowAlarm属性可屏蔽此算法
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">模拟量点别名</param>
-        /// <param name="hValue">高设定值</param>
-        /// <param name="resetValue">高复位值</param>
-        /// <param name="resetValue">低复位值</param>
-        /// <param name="outputAlarm">是否输出报警，默认为true</param>
-        /// <returns>是否有报警</returns>
-        public static bool AnalogH(this TaskBase task, string pointAlias, double hValue, double resetValue,bool outputAlarm=true)
+        /// <param name="point">模拟量点</param>
+        /// <param name="outputAlarm">是否输出报警，可选，默认为true</param>
+        /// <param name="key">临时数据键值前缀，可选</param>
+        /// <returns></returns>
+        public static bool AnalogL(this Point point)
         {
-            bool returnValue = false;
-            string preKey = pointAlias + "_AnalogH_" + hValue.ToString();
-            double value = task.AnalogValue(pointAlias);
-            if (TaskAnalogExtensions.AnalogH(task, value, hValue, resetValue, preKey))
-            {
-                returnValue = true;
-                if (outputAlarm)
-                    task.SendMessge(MessageType.Alarm, string.Format("{0}大于{1}", task.PointNameDescription(pointAlias), hValue));
-            }
+            if (!point.AllowAlarm)
+                return false;
+            double lValue = Convert.ToDouble(point.GetParamSetting(ParamSetting.LowValue));
+            double resetValue = Convert.ToDouble(point.GetParamSetting(ParamSetting.LowResetValue));
+            string alarmString = point.GetParamSetting(ParamSetting.LowAlarm);
+            bool outputAlarm = string.IsNullOrEmpty(alarmString);
+            bool returnValue= AnalogL(point, lValue, resetValue, outputAlarm);
+            if (returnValue && !outputAlarm)
+                point.SendMessage(MessageType.Alarm, alarmString);
             return returnValue;
         }
         /// <summary>
-        /// 模拟量高低值报警（可复位）
+        /// 模拟量点高报警（可复位）
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">模拟量点别名</param>
-        /// <param name="hValue">高设定值</param>
-        /// <param name="resethValue">高复位值</param>
-        /// <param name="lValue">低设定值</param>
-        /// <param name="resetlValue">低复位值</param>
-        /// <param name="outputAlarm">是否输出报警，默认为true</param>
+        /// <param name="point">模拟量点</param>
+        /// <param name="lValue">高报警值</param>
+        /// <param name="resetValue">报警复位值</param>
+        /// <param name="outputAlarm">是否输出报警，可选，默认为true</param>
+        /// <param name="key">临时数据键值前缀，可选</param>
         /// <returns>是否有报警</returns>
-        public static bool AnalogHL(this TaskBase task, string pointAlias, double hValue, double resethValue, double lValue, double resetlValue,bool outputAlarm=true)
+        public static bool AnalogH(this Point point, double hValue, double resetValue, bool outputAlarm = true, string key="")
         {
+            if (!point.Value.HasValue)
+                return false;
             bool returnValue = false;
-            if (AnalogH(task, pointAlias, hValue, resethValue, outputAlarm))
-                returnValue = true;
-            if (AnalogL(task, pointAlias, lValue, resetlValue, outputAlarm))
-                returnValue = true;
+            string preKey = string.IsNullOrEmpty(key) ? "AnalogH" : key + "_AnalogH";
+            double value = point.Value.Value;
+            returnValue = TaskExtensions.RSPulse(point, value > hValue, value < resetValue, preKey);
+
+            if (returnValue && outputAlarm)
+                point.SendMessage(MessageType.Alarm, string.Format("{0}大于{1}报警", point.Description, hValue));
+
+            return returnValue;
+
+        }
+        /// <summary>
+        /// 模拟量点高报警（可复位）
+        ///相关参数从模拟量点的配置中读取，模拟量点的AllowAlarm属性可屏蔽此算法
+        /// </summary>
+        /// <param name="point">模拟量点</param>
+        /// <param name="outputAlarm">是否输出报警，可选，默认为true</param>
+        /// <param name="key">临时数据键值前缀，可选</param>
+        /// <returns></returns>
+        public static bool AnalogH(this Point point)
+        {
+            if (!point.AllowAlarm)
+                return false;
+            double hValue = Convert.ToDouble(point.GetParamSetting(ParamSetting.HighValue));
+            double resetValue = Convert.ToDouble(point.GetParamSetting(ParamSetting.HighResetValue));
+            string alarmString = point.GetParamSetting(ParamSetting.HighAlarm);
+            bool outputAlarm = string.IsNullOrEmpty(alarmString);
+            bool returnValue= AnalogH(point, hValue, resetValue, outputAlarm);
+            if (returnValue && !outputAlarm)
+                point.SendMessage(MessageType.Alarm, alarmString);
             return returnValue;
         }
-        public static bool AnalogL(this TaskBase task,double value,double lValue,double resetValue,string preKey)
+        /// <summary>
+        /// 模拟量高低值报警（可复位），优先检查高报，如果有高报就不再检查低报
+        ///相关参数从模拟量点的配置中读取，模拟量点的AllowAlarm属性可屏蔽此算法
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="outputAlarm"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool AnalogHL(this Point point)
         {
-            return TaskExtensions.CanReset(task, value < lValue, value > resetValue, preKey);
-        }
-        public static bool AnalogH(this TaskBase task, double value, double hValue, double resetValue, string preKey)
-        {
+            if (AnalogH(point))
+                return true;
+            else
+                return AnalogL(point);
            
-            return TaskExtensions.CanReset(task,value>hValue,value <resetValue,preKey);
-        }
-        /// <summary>
-        /// 表示数个模拟量测点间偏差值大
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="value">数个模拟量测点的值</param>
-        /// <param name="hValue">偏差设定值</param>
-        /// <param name="tdOnSec">延时时间</param>
-        /// <param name="preKey"></param>
-        /// <returns></returns>
-
-        public static bool AnalogDeviationH(this TaskBase task, double[] value, double hValue, int tdOnSec, string preKey)
-        {
-           double maxValue;
-            double minValue ;
-            double avgValue ;
-            double sumValue ;
-            MaxMinSumAvgValue(value, out maxValue, out minValue, out avgValue, out sumValue);
-            string alarmStateKey = preKey + "_AlarmState";
-            return TaskExtensions.CanTdOn(task, (maxValue - minValue) > hValue, tdOnSec, preKey);
-        }
-        /// <summary>
-        /// 表示数个模拟量测点间偏差值大
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="alais">数个模拟量测点</param>
-        /// <param name="hValue">偏差设定值</param>
-        /// <param name="tdOnSec">延时时间</param>
-        /// <param name="preKey"></param>
-        /// <returns></returns>
-        public static bool AnalogDeviationH(this TaskBase task, string[] alais, double hValue, int tdOnSec, string preKey)
-        {
-            double[] value = GetAnalogValues(task, alais);
-            if (value != null)
-                return AnalogDeviationH(task, value, hValue, tdOnSec, preKey);
-            return false;
-
-        }
-        public static double[] GetAnalogValues(this TaskBase task, string[] alais)
-        {
-            if ((alais!=null) && (alais.Length > 0))
-            {
-                int nCount = alais.Length;
-                double[] value = new double[nCount];
-                for (int i = 0; i < nCount; i++)
-                {
-                    value[i] = task.AnalogValue(alais[i]);
-                }
-                return value;
-            }
-            return null;
         }
 
-        /// <summary>
-        /// 计算多个模拟量测点的最大值，最小值，平均值，和
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="maxValue"></param>
-        /// <param name="minValue"></param>
-        /// <param name="avgValue"></param>
-        /// <param name="sumValue"></param>
-        public static void MaxMinSumAvgValue(double[] value,out double maxValue,out double minValue,out double avgValue,out double sumValue)
-        {
-            maxValue = 0;
-            minValue = 0;
-            avgValue = 0;
-            sumValue = 0;
-            if(value != null)
-            {
-                int nCount = value.Length;
-                if (nCount > 0)
-                {
-                    for (int i = 0; i < nCount; i++)
-                    {
-                        if (i == 0)
-                        {
-                            maxValue = value[i];
-                            minValue = value[i];
-                            sumValue= value[i];
-                        }
-                        else
-                        {
-                            sumValue+= value[i];
-                            if(maxValue < value[i])
-                                maxValue = value[i];
-                            if(minValue > value[i])
-                                minValue = value[i];
-                        }
-                    }
 
-                    avgValue = sumValue/ nCount;
-                }
-   
-            }
-        }
 
- 
+
     }
 }

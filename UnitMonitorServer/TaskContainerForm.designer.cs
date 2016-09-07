@@ -41,44 +41,43 @@
             this.cbPeriod = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStartSelectedTask = new System.Windows.Forms.ToolStripButton();
+            this.btnHistorySetting = new System.Windows.Forms.ToolStripButton();
             this.dgvTasks = new System.Windows.Forms.DataGridView();
-            this.taskNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.taskPathDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.runCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.periodDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastSpendTimeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastSuccessDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.successCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.persistantSuccessDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.persistantFailDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.failCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolDebugData = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolTaskDetails = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStopSelectedTask = new System.Windows.Forms.ToolStripMenuItem();
-            this.tasksContainerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusTasksContainer = new System.Windows.Forms.ToolStripStatusLabel();
-            this.btnHistorySetting = new System.Windows.Forms.ToolStripButton();
+            this.合并测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tasksContainerBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.taskNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.runCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.periodDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.taskPathDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTasks)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tasksContainerBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tasksContainerBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.合并测试ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(722, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(722, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.Visible = false;
             // 
             // toolStrip1
             // 
@@ -93,11 +92,12 @@
             this.toolStripSeparator1,
             this.toolStartSelectedTask,
             this.btnHistorySetting});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(722, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
+            this.toolStrip1.Visible = false;
             // 
             // btnRun
             // 
@@ -185,6 +185,15 @@
             this.toolStartSelectedTask.Text = "启动选定任务";
             this.toolStartSelectedTask.Click += new System.EventHandler(this.toolStartSelectedTask_Click);
             // 
+            // btnHistorySetting
+            // 
+            this.btnHistorySetting.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnHistorySetting.Image = ((System.Drawing.Image)(resources.GetObject("btnHistorySetting.Image")));
+            this.btnHistorySetting.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnHistorySetting.Name = "btnHistorySetting";
+            this.btnHistorySetting.Size = new System.Drawing.Size(23, 22);
+            this.btnHistorySetting.Text = "历史模式时间设定";
+            // 
             // dgvTasks
             // 
             this.dgvTasks.AllowUserToAddRows = false;
@@ -193,15 +202,9 @@
             this.dgvTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTasks.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.taskNameDataGridViewTextBoxColumn,
-            this.taskPathDataGridViewTextBoxColumn,
             this.runCountDataGridViewTextBoxColumn,
             this.periodDataGridViewTextBoxColumn,
-            this.lastSpendTimeDataGridViewTextBoxColumn,
-            this.lastSuccessDataGridViewCheckBoxColumn,
-            this.successCountDataGridViewTextBoxColumn,
-            this.persistantSuccessDataGridViewTextBoxColumn,
-            this.persistantFailDataGridViewTextBoxColumn,
-            this.failCountDataGridViewTextBoxColumn});
+            this.taskPathDataGridViewTextBoxColumn});
             this.dgvTasks.ContextMenuStrip = this.contextMenuStrip1;
             this.dgvTasks.DataSource = this.tasksContainerBindingSource;
             this.dgvTasks.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -209,122 +212,37 @@
             this.dgvTasks.Name = "dgvTasks";
             this.dgvTasks.ReadOnly = true;
             this.dgvTasks.RowTemplate.Height = 23;
-            this.dgvTasks.Size = new System.Drawing.Size(478, 338);
+            this.dgvTasks.Size = new System.Drawing.Size(478, 387);
             this.dgvTasks.TabIndex = 2;
             this.dgvTasks.VirtualMode = true;
-            // 
-            // taskNameDataGridViewTextBoxColumn
-            // 
-            this.taskNameDataGridViewTextBoxColumn.DataPropertyName = "TaskName";
-            this.taskNameDataGridViewTextBoxColumn.HeaderText = "任务名称";
-            this.taskNameDataGridViewTextBoxColumn.Name = "taskNameDataGridViewTextBoxColumn";
-            this.taskNameDataGridViewTextBoxColumn.ReadOnly = true;
-            this.taskNameDataGridViewTextBoxColumn.Width = 150;
-            // 
-            // taskPathDataGridViewTextBoxColumn
-            // 
-            this.taskPathDataGridViewTextBoxColumn.DataPropertyName = "TaskPath";
-            this.taskPathDataGridViewTextBoxColumn.HeaderText = "任务路径";
-            this.taskPathDataGridViewTextBoxColumn.Name = "taskPathDataGridViewTextBoxColumn";
-            this.taskPathDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // runCountDataGridViewTextBoxColumn
-            // 
-            this.runCountDataGridViewTextBoxColumn.DataPropertyName = "RunCount";
-            this.runCountDataGridViewTextBoxColumn.HeaderText = "运行次数";
-            this.runCountDataGridViewTextBoxColumn.Name = "runCountDataGridViewTextBoxColumn";
-            this.runCountDataGridViewTextBoxColumn.ReadOnly = true;
-            this.runCountDataGridViewTextBoxColumn.Width = 60;
-            // 
-            // periodDataGridViewTextBoxColumn
-            // 
-            this.periodDataGridViewTextBoxColumn.DataPropertyName = "Period";
-            this.periodDataGridViewTextBoxColumn.HeaderText = "运行周期";
-            this.periodDataGridViewTextBoxColumn.Name = "periodDataGridViewTextBoxColumn";
-            this.periodDataGridViewTextBoxColumn.ReadOnly = true;
-            this.periodDataGridViewTextBoxColumn.Width = 60;
-            // 
-            // lastSpendTimeDataGridViewTextBoxColumn
-            // 
-            this.lastSpendTimeDataGridViewTextBoxColumn.DataPropertyName = "LastSpendTime";
-            this.lastSpendTimeDataGridViewTextBoxColumn.HeaderText = "上次花费时间";
-            this.lastSpendTimeDataGridViewTextBoxColumn.Name = "lastSpendTimeDataGridViewTextBoxColumn";
-            this.lastSpendTimeDataGridViewTextBoxColumn.ReadOnly = true;
-            this.lastSpendTimeDataGridViewTextBoxColumn.Width = 80;
-            // 
-            // lastSuccessDataGridViewCheckBoxColumn
-            // 
-            this.lastSuccessDataGridViewCheckBoxColumn.DataPropertyName = "LastSuccess";
-            this.lastSuccessDataGridViewCheckBoxColumn.HeaderText = "上次成功运行";
-            this.lastSuccessDataGridViewCheckBoxColumn.Name = "lastSuccessDataGridViewCheckBoxColumn";
-            this.lastSuccessDataGridViewCheckBoxColumn.ReadOnly = true;
-            this.lastSuccessDataGridViewCheckBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.lastSuccessDataGridViewCheckBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.lastSuccessDataGridViewCheckBoxColumn.Width = 50;
-            // 
-            // successCountDataGridViewTextBoxColumn
-            // 
-            this.successCountDataGridViewTextBoxColumn.DataPropertyName = "SuccessCount";
-            this.successCountDataGridViewTextBoxColumn.HeaderText = "成功总次数";
-            this.successCountDataGridViewTextBoxColumn.Name = "successCountDataGridViewTextBoxColumn";
-            this.successCountDataGridViewTextBoxColumn.ReadOnly = true;
-            this.successCountDataGridViewTextBoxColumn.Width = 80;
-            // 
-            // persistantSuccessDataGridViewTextBoxColumn
-            // 
-            this.persistantSuccessDataGridViewTextBoxColumn.DataPropertyName = "PersistantSuccess";
-            this.persistantSuccessDataGridViewTextBoxColumn.HeaderText = "连续成功次数";
-            this.persistantSuccessDataGridViewTextBoxColumn.Name = "persistantSuccessDataGridViewTextBoxColumn";
-            this.persistantSuccessDataGridViewTextBoxColumn.ReadOnly = true;
-            this.persistantSuccessDataGridViewTextBoxColumn.Width = 80;
-            // 
-            // persistantFailDataGridViewTextBoxColumn
-            // 
-            this.persistantFailDataGridViewTextBoxColumn.DataPropertyName = "PersistantFail";
-            this.persistantFailDataGridViewTextBoxColumn.HeaderText = "连续失败次数";
-            this.persistantFailDataGridViewTextBoxColumn.Name = "persistantFailDataGridViewTextBoxColumn";
-            this.persistantFailDataGridViewTextBoxColumn.ReadOnly = true;
-            this.persistantFailDataGridViewTextBoxColumn.Width = 80;
-            // 
-            // failCountDataGridViewTextBoxColumn
-            // 
-            this.failCountDataGridViewTextBoxColumn.DataPropertyName = "FailCount";
-            this.failCountDataGridViewTextBoxColumn.HeaderText = "失败总次数";
-            this.failCountDataGridViewTextBoxColumn.Name = "failCountDataGridViewTextBoxColumn";
-            this.failCountDataGridViewTextBoxColumn.ReadOnly = true;
-            this.failCountDataGridViewTextBoxColumn.Width = 80;
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolDebugData,
+            this.toolTaskDetails,
             this.toolStopSelectedTask});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(125, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 70);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
-            // toolDebugData
+            // toolTaskDetails
             // 
-            this.toolDebugData.Name = "toolDebugData";
-            this.toolDebugData.Size = new System.Drawing.Size(124, 22);
-            this.toolDebugData.Text = "调试数据";
-            this.toolDebugData.Click += new System.EventHandler(this.toolDebugData_Click);
+            this.toolTaskDetails.Name = "toolTaskDetails";
+            this.toolTaskDetails.Size = new System.Drawing.Size(152, 22);
+            this.toolTaskDetails.Text = "任务详情";
+            this.toolTaskDetails.Click += new System.EventHandler(this.toolTaskDetails_Click);
             // 
             // toolStopSelectedTask
             // 
             this.toolStopSelectedTask.Name = "toolStopSelectedTask";
-            this.toolStopSelectedTask.Size = new System.Drawing.Size(124, 22);
+            this.toolStopSelectedTask.Size = new System.Drawing.Size(152, 22);
             this.toolStopSelectedTask.Text = "停止运行";
             this.toolStopSelectedTask.Click += new System.EventHandler(this.toolStopSelectedTask_Click);
-            // 
-            // tasksContainerBindingSource
-            // 
-            this.tasksContainerBindingSource.DataSource = typeof(UnitMonitorCommon.TasksContainer);
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 49);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -334,7 +252,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgvTasks);
-            this.splitContainer1.Size = new System.Drawing.Size(722, 338);
+            this.splitContainer1.Size = new System.Drawing.Size(722, 387);
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 3;
             // 
@@ -344,7 +262,7 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(240, 338);
+            this.treeView1.Size = new System.Drawing.Size(240, 387);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.node_AfterCheck);
             // 
@@ -364,14 +282,45 @@
             this.StatusTasksContainer.Size = new System.Drawing.Size(44, 17);
             this.StatusTasksContainer.Text = "状态：";
             // 
-            // btnHistorySetting
+            // 合并测试ToolStripMenuItem
             // 
-            this.btnHistorySetting.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnHistorySetting.Image = ((System.Drawing.Image)(resources.GetObject("btnHistorySetting.Image")));
-            this.btnHistorySetting.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnHistorySetting.Name = "btnHistorySetting";
-            this.btnHistorySetting.Size = new System.Drawing.Size(23, 22);
-            this.btnHistorySetting.Text = "历史模式时间设定";
+            this.合并测试ToolStripMenuItem.Name = "合并测试ToolStripMenuItem";
+            this.合并测试ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.合并测试ToolStripMenuItem.Text = "合并测试";
+            // 
+            // tasksContainerBindingSource
+            // 
+            this.tasksContainerBindingSource.DataSource = typeof(UnitMonitorCommon.TasksContainer);
+            // 
+            // taskNameDataGridViewTextBoxColumn
+            // 
+            this.taskNameDataGridViewTextBoxColumn.DataPropertyName = "TaskName";
+            this.taskNameDataGridViewTextBoxColumn.HeaderText = "任务名称";
+            this.taskNameDataGridViewTextBoxColumn.Name = "taskNameDataGridViewTextBoxColumn";
+            this.taskNameDataGridViewTextBoxColumn.ReadOnly = true;
+            this.taskNameDataGridViewTextBoxColumn.Width = 150;
+            // 
+            // runCountDataGridViewTextBoxColumn
+            // 
+            this.runCountDataGridViewTextBoxColumn.DataPropertyName = "RunCount";
+            this.runCountDataGridViewTextBoxColumn.HeaderText = "运行次数";
+            this.runCountDataGridViewTextBoxColumn.Name = "runCountDataGridViewTextBoxColumn";
+            this.runCountDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // periodDataGridViewTextBoxColumn
+            // 
+            this.periodDataGridViewTextBoxColumn.DataPropertyName = "Period";
+            this.periodDataGridViewTextBoxColumn.HeaderText = "运行周期";
+            this.periodDataGridViewTextBoxColumn.Name = "periodDataGridViewTextBoxColumn";
+            this.periodDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // taskPathDataGridViewTextBoxColumn
+            // 
+            this.taskPathDataGridViewTextBoxColumn.DataPropertyName = "TaskPath";
+            this.taskPathDataGridViewTextBoxColumn.HeaderText = "任务路径";
+            this.taskPathDataGridViewTextBoxColumn.Name = "taskPathDataGridViewTextBoxColumn";
+            this.taskPathDataGridViewTextBoxColumn.ReadOnly = true;
+            this.taskPathDataGridViewTextBoxColumn.Width = 300;
             // 
             // TaskContainerForm
             // 
@@ -386,17 +335,19 @@
             this.Name = "TaskContainerForm";
             this.Text = "任务中心";
             this.Load += new System.EventHandler(this.TaskContainerForm_Load);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTasks)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tasksContainerBindingSource)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tasksContainerBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -416,24 +367,19 @@
         private System.Windows.Forms.DataGridView dgvTasks;
         private System.Windows.Forms.BindingSource tasksContainerBindingSource;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem toolDebugData;
+        private System.Windows.Forms.ToolStripMenuItem toolTaskDetails;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.ToolStripButton toolStartSelectedTask;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem toolStopSelectedTask;
-        private System.Windows.Forms.DataGridViewTextBoxColumn taskNameDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn taskPathDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn runCountDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn periodDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn lastSpendTimeDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn lastSuccessDataGridViewCheckBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn successCountDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn persistantSuccessDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn persistantFailDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn failCountDataGridViewTextBoxColumn;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel StatusTasksContainer;
         private System.Windows.Forms.ToolStripButton btnHistorySetting;
+        private System.Windows.Forms.ToolStripMenuItem 合并测试ToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn taskNameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn runCountDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn periodDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn taskPathDataGridViewTextBoxColumn;
     }
 }

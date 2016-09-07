@@ -11,13 +11,21 @@ using System.Windows.Forms;
 using UnitMonitorCommon;
 namespace UnitMonitorServer
 {
-    public partial class TaskContainerForm : Form
+    public partial class TaskContainerForm : Form, IMergeToolStrip
     {
         private delegate void UpdatetData();
         public TaskContainerForm()
         {
             InitializeComponent();
 
+        }
+        public ToolStrip MergeToolStrip
+        {
+            get
+            {
+
+                return toolStrip1;
+            }
         }
 
         private void TaskContainerForm_Load(object sender, EventArgs e)
@@ -46,7 +54,7 @@ namespace UnitMonitorServer
 
             StatusTasksContainer.Text = string.Format("状态：运行次数{0}，上次花费时间{1}毫秒", TasksContainer.Instance.RunCount, TasksContainer.Instance.LastSpendTime);
         }
-        private void OnTaskContainerStateChanged(object sender,EventArgs e)
+        private void OnTaskContainerStateChanged(object sender, EventArgs e)
         {
             if (this.InvokeRequired)
                 this.Invoke(new UpdatetData(RefreshToolButton));
@@ -154,13 +162,13 @@ namespace UnitMonitorServer
         {
             if (dgvTasks.SelectedRows.Count > 0)
             {
-                toolDebugData.Enabled = true;
+                toolTaskDetails.Enabled = true;
                 toolStopSelectedTask.Enabled = true;
             }
 
             else
             {
-                toolDebugData.Enabled = false;
+                toolTaskDetails.Enabled = false;
                 toolStopSelectedTask.Enabled = false;
             }
 
@@ -170,20 +178,7 @@ namespace UnitMonitorServer
             //    toolDebugData.Enabled = false;
         }
 
-        private void toolDebugData_Click(object sender, EventArgs e)
-        {
-            if (dgvTasks.SelectedRows.Count > 0)
-            {
-                TaskBase task = TasksContainer.Instance[dgvTasks.SelectedRows[0].Index];
-                if (task != null)
-                {
-                    DebugDataForm form = new DebugDataForm(task);
-                    form.ShowDialog();
-                }
 
-            }
-
-        }
 
         private void PaintTreeView()
         {
@@ -219,12 +214,12 @@ namespace UnitMonitorServer
             }
             foreach (FileInfo item in files)
             {
-                if (item.Extension.ToLower().Contains("config"))
+                if (item.Extension.ToLower().Contains("task"))
                 {
                     TreeNode itemNode = treeNode.Nodes.Add(item.Name);
                     itemNode.SelectedImageIndex = 2;
                     itemNode.Tag = item;
-                   
+
                     if (TasksContainer.Instance.FindTask(item.FullName) != null)
                         itemNode.Checked = true;
                 }
@@ -273,10 +268,10 @@ namespace UnitMonitorServer
                 if (node.Checked && node.Tag != null)
                 {
                     FileInfo inf = (FileInfo)node.Tag;
-                   
+
                     if (TasksContainer.Instance.FindTask(inf.FullName) == null)
                     {
-                        TaskBase task = TasksContainer.LoadTask(inf);
+                        TaskBase task = TaskBase.LoadTask(inf);
                         TasksContainer.Instance.AddTask(task);
 
                     }
@@ -292,6 +287,19 @@ namespace UnitMonitorServer
             while (dgvTasks.SelectedRows.Count > 0)
             {
                 TasksContainer.Instance.RemoveAt(dgvTasks.SelectedRows[0].Index);
+            }
+        }
+
+        private void toolTaskDetails_Click(object sender, EventArgs e)
+        {
+            if (dgvTasks.SelectedRows.Count > 0)
+            {
+                TaskBase task = TasksContainer.Instance[dgvTasks.SelectedRows[0].Index];
+                if (task != null)
+                {
+                    TaskForm form = new TaskForm(task);
+                    form.ShowDialog();
+                }
             }
         }
     }

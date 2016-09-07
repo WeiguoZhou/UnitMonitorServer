@@ -7,170 +7,120 @@ using UnitMonitorCommunication;
 
 namespace UnitMonitorCommon
 {
-   public static class TaskLPExtensions
+    public static class TaskLPExtensions
     {
         /// <summary>
-        /// 检测电源是否有报警
+        /// 监视电源是否出现新报警
+        /// 当监视前本来就故障，不会发报警
+        /// 点的AllowAlarm属性可屏蔽此算法
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias"></param>
+        /// <param name="point"></param>
         /// <param name="outputAlarm">是否输出报警，默认为true</param>
         /// <returns>是否有报警</returns>
-        public static bool PowerFault(this TaskBase task,string pointAlias, bool outputAlarm = true)
+        public static bool PowerNewFault(this Point point, bool outputAlarm = true)
         {
+            if (!point.AllowAlarm || !point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
             bool returnValue = false;
-            int value = task.LpValue(pointAlias);
-            string oldValueKey = pointAlias + "_PowerFault_OldValue"; //考虑到每次执行都会新值替换旧值，键值加上PowerFault防止影响其它检测
-            if (!task.TempValue.ContainsKey(oldValueKey))
-            {
-                task.TempValue.Add(oldValueKey, value);
-                if (value.PowerFault())
-                {
-                    returnValue = true;
-                    if(outputAlarm)
-                        task.SendMessge(MessageType.Alarm, string.Format("{0}{1}", task.PointNameDescription(pointAlias), PowerFaultString(value)));
-                }
-            }
-
-            else
-            {
-                int oldValue = (int)task.TempValue[oldValueKey];
-                if (value.NewPowerFault(oldValue))
-                {
-                    returnValue = true;
-                    if (outputAlarm)
-                        task.SendMessge(MessageType.Alarm, string.Format("{0}{1}", task.PointNameDescription(pointAlias), PowerFaultString(value)));
-                }                  
-                task.TempValue[oldValueKey] = value;
-            }
+            int value = point.IntValue.Value;
+            int oldValue = point.OldIntValue.Value;
+            returnValue = value.NewPowerFault(oldValue);
+            if (returnValue && outputAlarm)
+                point.SendMessage(MessageType.Alarm, string.Format("{0}{1}", point.Description, PowerFaultString(value)));
             return returnValue;
         }
-        public static bool ValveFault(this TaskBase task, string pointAlias,bool outputAlarm = true)
+
+        /// <summary>
+        /// 监视阀门是否出现新报警
+        /// 当监视前本来就故障，不会发报警
+        /// 点的AllowAlarm属性可屏蔽此算法
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="outputAlarm"></param>
+        /// <returns></returns>
+        public static bool ValveNewFault(this Point point, bool outputAlarm = true)
         {
+            if (!point.AllowAlarm || !point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
             bool returnValue = false;
-            int value = task.LpValue(pointAlias);
-            string oldValueKey = pointAlias + "_ValveFault_OldValue";
-            if (!task.TempValue.ContainsKey(oldValueKey))
-            {
-                task.TempValue.Add(oldValueKey, value);
-                if (value.ValveFault())
-                {
-                    returnValue = true;
-                    if (outputAlarm)
-                        task.SendMessge(MessageType.Alarm, string.Format("{0}{1}", task.PointNameDescription(pointAlias), ValveFaultString(value)));
-                }
-            }
-
-            else
-            {
-                int oldValue = (int)task.TempValue[oldValueKey];
-
-                if (value.NewValveFault(oldValue))
-                {
-                    returnValue = true;
-                    if (outputAlarm)
-                        task.SendMessge(MessageType.Alarm, string.Format("{0}{1}", task.PointNameDescription(pointAlias), ValveFaultString(value)));      
-                }
-                      task.TempValue[oldValueKey] = value;
-            }
+            int value = point.IntValue.Value;
+            int oldValue = point.OldIntValue.Value;
+            returnValue = value.NewValveFault(oldValue);
+            if (returnValue && outputAlarm)
+                point.SendMessage(MessageType.Alarm, string.Format("{0}{1}", point.Description, ValveFaultString(value)));
             return returnValue;
         }
         /// <summary>
-        /// 检测电源或阀门是否刚停止或关闭
+        /// 监视电源或阀门是否刚停止或关闭
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">开关量点别名</param>
+        /// <param name="point"></param>
         /// <param name="outputAlarm">是否输出报警，默认为true</param>
         /// <returns>是否有报警</returns>
-        public static bool NewOff(this TaskBase task, string pointAlias,bool outputAlarm=true)
+        public static bool NewOff(this Point point, bool outputAlarm = true)
         {
+            if (!point.AllowAlarm || !point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
             bool returnValue = false;
-            int value = task.LpValue(pointAlias);
-            string oldValueKey = pointAlias + "_NewOff_OldValue";
-            if (!task.TempValue.ContainsKey(oldValueKey))
-                task.TempValue.Add(oldValueKey, value);
-            else
-            {
-                int oldValue = (int)task.TempValue[oldValueKey];
-                if (value.NewOff(oldValue))
-                {
-                    returnValue = true;
-                    if(outputAlarm)
-                        task.SendMessge(MessageType.Alarm, string.Format("{0}刚停止或关闭", task.PointNameDescription(pointAlias)));
-                }
+            int value = point.IntValue.Value;
+            int oldValue = point.OldIntValue.Value;
+            returnValue = value.NewOff(oldValue);
+            if (returnValue && outputAlarm)
+                point.SendMessage(MessageType.Alarm, string.Format("{0}刚停止或关闭", point.Description));
+            return returnValue;
 
-                task.TempValue[oldValueKey] = value;
-            }
+        }
+        /// <summary>
+        /// 监视电源或阀门是否刚启动或打开
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="outputAlarm">是否输出报警，默认为true</param>
+        /// <returns>是否有报警</returns>
+        public static bool NewOn(this Point point, bool outputAlarm = true)
+        {
+            if (!point.AllowAlarm || !point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
+            bool returnValue = false;
+            int value = point.IntValue.Value;
+            int oldValue = point.OldIntValue.Value;
+            returnValue = value.NewOn(oldValue);
+            if (returnValue && outputAlarm)
+                point.SendMessage(MessageType.Alarm, string.Format("{0}刚启动或开足", point.Description));
             return returnValue;
         }
         /// <summary>
-        /// 检测电源或阀门是否刚启动或打开
+        /// 监视电源或阀门是否刚失去启动或开足信号
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="pointAlias">开关量点别名</param>
-        /// <param name="outputAlarm">是否输出报警，默认为true</param>
-        /// <returns>是否有报警</returns>
-        public static bool NewOn(this TaskBase task, string pointAlias, bool outputAlarm = true)
+        /// <param name="point"></param>
+        /// <param name="outputAlarm"></param>
+        /// <returns></returns>
+        public static bool NewLostOn(this Point point, bool outputAlarm = true)
         {
+            if (!point.AllowAlarm || !point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
             bool returnValue = false;
-            int value = task.LpValue(pointAlias);
-            string oldValueKey = pointAlias + "_NewOn_OldValue";
-            if (!task.TempValue.ContainsKey(oldValueKey))
-                task.TempValue.Add(oldValueKey, value);
-            else
-            {
-                int oldValue = (int)task.TempValue[oldValueKey];
-                if (value.NewOn(oldValue))
-                {
-                    returnValue = true;
-                    if (outputAlarm)
-                        task.SendMessge(MessageType.Alarm, string.Format("{0}刚启动或打开", task.PointNameDescription(pointAlias)));
-                }
-
-                task.TempValue[oldValueKey] = value;
-            }
+            int value = point.IntValue.Value;
+            int oldValue = point.OldIntValue.Value;
+            returnValue = value.NewLostOn(oldValue);
+            if (returnValue && outputAlarm)
+                point.SendMessage(MessageType.Alarm, string.Format("{0}刚失去启动或开足信号", point.Description));
             return returnValue;
         }
-        public static bool NewLostOn(this TaskBase task, string pointAlias, bool outputAlarm = true)
+        /// <summary>
+        /// 打包点刚失去停止或关闭信号，脉冲输出。
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="outputAlarm"></param>
+        /// <returns></returns>
+        public static bool NewLostOff(this Point point,  bool outputAlarm = true)
         {
+            if (!point.AllowAlarm || !point.Value.HasValue || !point.OldValue.HasValue)
+                return false;
             bool returnValue = false;
-            int value = task.LpValue(pointAlias);
-            string oldValueKey = pointAlias + "_NewLostOn_OldValue";
-            if (!task.TempValue.ContainsKey(oldValueKey))
-                task.TempValue.Add(oldValueKey, value);
-            else
-            {
-                int oldValue = (int)task.TempValue[oldValueKey];
-                if (oldValue.NewOn(value))
-                {
-                    returnValue = true;
-                    if (outputAlarm)
-                        task.SendMessge(MessageType.Alarm, string.Format("{0}刚失去启动或开足信号", task.PointNameDescription(pointAlias)));
-                }
-
-                task.TempValue[oldValueKey] = value;
-            }
-            return returnValue;
-        }
-        public static bool NewLostOff(this TaskBase task, string pointAlias, bool outputAlarm = true)
-        {
-            bool returnValue = false;
-            int value = task.LpValue(pointAlias);
-            string oldValueKey = pointAlias + "_NewLostOff_OldValue";
-            if (!task.TempValue.ContainsKey(oldValueKey))
-                task.TempValue.Add(oldValueKey, value);
-            else
-            {
-                int oldValue = (int)task.TempValue[oldValueKey];
-                if (oldValue.NewOff(value))
-                {
-                    returnValue = true;
-                    if (outputAlarm)
-                        task.SendMessge(MessageType.Alarm, string.Format("{0}刚失去停止或关闭信号", task.PointNameDescription(pointAlias)));
-                }
-
-                task.TempValue[oldValueKey] = value;
-            }
+            int value = point.IntValue.Value;
+            int oldValue = point.OldIntValue.Value;
+            returnValue = value.NewLostOff(oldValue);        
+            if (returnValue && outputAlarm)
+                point.SendMessage(MessageType.Alarm, string.Format("{0}刚失去停止或关闭信号", point.Description));
             return returnValue;
         }
         /// <summary>
@@ -181,7 +131,7 @@ namespace UnitMonitorCommon
         /// <returns></returns>
         public static bool NewValveFault(this int newValue, int oldValue)
         {
-            if ((newValue != oldValue)  && ValveFault(newValue) && !ValveFault(oldValue))
+            if ((newValue != oldValue) && ValveFault(newValue) && !ValveFault(oldValue))
             {
                 return true;
             }
@@ -202,52 +152,7 @@ namespace UnitMonitorCommon
             }
             return false;
         }
-        public static bool LPTdOn(this TaskBase task, string pointAlias,int tdOnSec)
-        {
-            bool returnValue = false;
-            int value = task.LpValue(pointAlias);
-            string preKey = pointAlias + "_TdOn_" + tdOnSec.ToString();
-            if (value.IsOn())
-            {
-                string beginTimeKey = preKey + "_BeginTime";
-                DateTime currentTime = TasksContainer.Instance.CurrentTime;
-                if (!task.TempValue.ContainsKey(beginTimeKey))
-                    task.TempValue.Add(beginTimeKey, currentTime);
-                DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
-                if (beginTime.AddSeconds(tdOnSec) <= currentTime)
-                    returnValue = true;
-            }
-            else
-            {
-                task.TempValue.Remove(preKey);
-            }
 
-            return returnValue;
-
-        }
-        public static bool LPTdOff(this TaskBase task, string pointAlias, int tdOffSec)
-        {
-            bool returnValue = false;
-            int value = task.LpValue(pointAlias);
-            string preKey = pointAlias + "_TdOff_" + tdOffSec.ToString();
-            if (value.IsOff())
-            {
-                string beginTimeKey = preKey + "_BeginTime";
-                DateTime currentTime = TasksContainer.Instance.CurrentTime;
-                if (!task.TempValue.ContainsKey(beginTimeKey))
-                    task.TempValue.Add(beginTimeKey, currentTime);
-                DateTime beginTime = (DateTime)task.TempValue[beginTimeKey];
-                if (beginTime.AddSeconds(tdOffSec) <= currentTime)
-                    returnValue = true;
-            }
-            else
-            {
-                task.TempValue.Remove(preKey);
-            }
-
-            return returnValue;
-
-        }
         /// <summary>
         /// 打包点状态位比较
         /// 因为edna保存精度问题，如果32位都比较会出错
@@ -270,13 +175,35 @@ namespace UnitMonitorCommon
         {
             return (value & Convert.ToInt32(Math.Pow(2, bit))) > 0;
         }
+        /// <summary>
+        /// 表示设备已启动或阀门在开足位
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static bool IsOn(this int value)
         {
             return GetBitValue(value, 9);
         }
+        public static bool IsOn(this Point  point)
+        {
+            if (!point.Value.HasValue)
+                return false;
+            return GetBitValue(point.IntValue.Value, 9);
+        }
+        /// <summary>
+        /// 表示设备已停止或阀门在关闭位
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static bool IsOff(this int value)
         {
             return GetBitValue(value, 10);
+        }
+        public static bool IsOff(this Point point)
+        {
+            if (!point.Value.HasValue)
+                return false;
+            return GetBitValue(point.IntValue.Value, 10);
         }
         /// <summary>
         /// 检查阀门是否在故障状态
@@ -292,13 +219,13 @@ namespace UnitMonitorCommon
         /// 检查电源或阀门是否刚停止或关闭
         /// </summary>
         /// <returns></returns>
-        public static bool NewOff(this int newValue,  int oldValue)
+        public static bool NewOff(this int newValue, int oldValue)
         {
             if ((newValue != oldValue) && IsOff(newValue) && !IsOff(oldValue))
                 return true;
             return false;
         }
-  
+
         /// <summary>
         /// 检查电源或阀门是否刚启动或打开
         /// </summary>
@@ -314,7 +241,7 @@ namespace UnitMonitorCommon
         /// </summary>
 
         /// <returns></returns>
-        public static bool NewLostOn(this int newValue,int oldValue)
+        public static bool NewLostOn(this int newValue, int oldValue)
         {
             if ((newValue != oldValue) && !IsOn(newValue) && IsOn(oldValue))
                 return true;
@@ -325,10 +252,10 @@ namespace UnitMonitorCommon
         /// </summary>
 
         /// <returns></returns>
-        public static bool NewLostOff(this int newValue,  int oldValue)
+        public static bool NewLostOff(this int newValue, int oldValue)
         {
             if ((newValue != oldValue) && !IsOff(newValue) && IsOff(oldValue))
-              return true;
+                return true;
             return false;
         }
         /// <summary>
@@ -374,5 +301,6 @@ namespace UnitMonitorCommon
                 ret += "电气故障";
             return ret;
         }
+
     }
 }

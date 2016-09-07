@@ -33,6 +33,10 @@ namespace UnitMonitorClient
             return true;
 
         }
+        public bool TestOnline()
+        {
+            return true;
+        }
 
         //通知客户端服务端已关闭
 

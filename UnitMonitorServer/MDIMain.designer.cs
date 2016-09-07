@@ -57,6 +57,8 @@
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTask = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTaskContainerForm = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolClientsForm = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolComponents = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowsMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,7 +86,6 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.toolClientsForm = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -96,6 +97,7 @@
             this.fileMenu,
             this.editMenu,
             this.viewMenu,
+            this.toolComponents,
             this.toolsMenu,
             this.windowsMenu,
             this.helpMenu});
@@ -304,7 +306,7 @@
             this.toolBarToolStripMenuItem.CheckOnClick = true;
             this.toolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolBarToolStripMenuItem.Name = "toolBarToolStripMenuItem";
-            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.toolBarToolStripMenuItem.Text = "工具栏(&T)";
             this.toolBarToolStripMenuItem.Click += new System.EventHandler(this.ToolBarToolStripMenuItem_Click);
             // 
@@ -314,23 +316,36 @@
             this.statusBarToolStripMenuItem.CheckOnClick = true;
             this.statusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.statusBarToolStripMenuItem.Name = "statusBarToolStripMenuItem";
-            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.statusBarToolStripMenuItem.Text = "状态栏(&S)";
             this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.StatusBarToolStripMenuItem_Click);
             // 
             // menuTask
             // 
             this.menuTask.Name = "menuTask";
-            this.menuTask.Size = new System.Drawing.Size(152, 22);
+            this.menuTask.Size = new System.Drawing.Size(127, 22);
             this.menuTask.Text = "任务列表";
             this.menuTask.Click += new System.EventHandler(this.menuTask_Click);
             // 
             // toolTaskContainerForm
             // 
             this.toolTaskContainerForm.Name = "toolTaskContainerForm";
-            this.toolTaskContainerForm.Size = new System.Drawing.Size(152, 22);
+            this.toolTaskContainerForm.Size = new System.Drawing.Size(127, 22);
             this.toolTaskContainerForm.Text = "任务中心";
             this.toolTaskContainerForm.Click += new System.EventHandler(this.toolTaskContainerForm_Click);
+            // 
+            // toolClientsForm
+            // 
+            this.toolClientsForm.Name = "toolClientsForm";
+            this.toolClientsForm.Size = new System.Drawing.Size(127, 22);
+            this.toolClientsForm.Text = "客户端";
+            this.toolClientsForm.Click += new System.EventHandler(this.toolClientsForm_Click);
+            // 
+            // toolComponents
+            // 
+            this.toolComponents.Name = "toolComponents";
+            this.toolComponents.Size = new System.Drawing.Size(60, 21);
+            this.toolComponents.Text = "组件(&C)";
             // 
             // toolsMenu
             // 
@@ -472,6 +487,7 @@
             this.newToolStripButton.Name = "newToolStripButton";
             this.newToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.newToolStripButton.Text = "新建";
+            this.newToolStripButton.Visible = false;
             this.newToolStripButton.Click += new System.EventHandler(this.ShowNewForm);
             // 
             // openToolStripButton
@@ -482,6 +498,7 @@
             this.openToolStripButton.Name = "openToolStripButton";
             this.openToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.openToolStripButton.Text = "打开";
+            this.openToolStripButton.Visible = false;
             this.openToolStripButton.Click += new System.EventHandler(this.OpenFile);
             // 
             // saveToolStripButton
@@ -492,11 +509,13 @@
             this.saveToolStripButton.Name = "saveToolStripButton";
             this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.saveToolStripButton.Text = "保存";
+            this.saveToolStripButton.Visible = false;
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Visible = false;
             // 
             // printToolStripButton
             // 
@@ -506,6 +525,7 @@
             this.printToolStripButton.Name = "printToolStripButton";
             this.printToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.printToolStripButton.Text = "打印";
+            this.printToolStripButton.Visible = false;
             // 
             // printPreviewToolStripButton
             // 
@@ -515,11 +535,13 @@
             this.printPreviewToolStripButton.Name = "printPreviewToolStripButton";
             this.printPreviewToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.printPreviewToolStripButton.Text = "打印预览";
+            this.printPreviewToolStripButton.Visible = false;
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator2.Visible = false;
             // 
             // helpToolStripButton
             // 
@@ -529,6 +551,7 @@
             this.helpToolStripButton.Name = "helpToolStripButton";
             this.helpToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.helpToolStripButton.Text = "帮助";
+            this.helpToolStripButton.Visible = false;
             // 
             // statusStrip
             // 
@@ -546,13 +569,6 @@
             this.toolStripStatusLabel.Size = new System.Drawing.Size(32, 17);
             this.toolStripStatusLabel.Text = "状态";
             // 
-            // toolClientsForm
-            // 
-            this.toolClientsForm.Name = "toolClientsForm";
-            this.toolClientsForm.Size = new System.Drawing.Size(152, 22);
-            this.toolClientsForm.Text = "客户端";
-            this.toolClientsForm.Click += new System.EventHandler(this.toolClientsForm_Click);
-            // 
             // MDIMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -566,6 +582,7 @@
             this.Name = "MDIMain";
             this.Text = "机组运行监视器（服务端）";
             this.Load += new System.EventHandler(this.MDIMain_Load);
+            this.MdiChildActivate += new System.EventHandler(this.MDIMain_MdiChildActivate);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.toolStrip.ResumeLayout(false);
@@ -634,6 +651,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuTask;
         private System.Windows.Forms.ToolStripMenuItem toolTaskContainerForm;
         private System.Windows.Forms.ToolStripMenuItem toolClientsForm;
+        private System.Windows.Forms.ToolStripMenuItem toolComponents;
     }
 }
 

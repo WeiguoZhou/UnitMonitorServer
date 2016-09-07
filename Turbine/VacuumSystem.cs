@@ -48,13 +48,11 @@ namespace Turbine
         #endregion
 
         #region "功能开关"
-        const string s_checkPmpBearingTemp = "checkPmpBearingTemp"; //检测真空泵轴承温度
+        const string s_checkPmpBearingTemp = "checkPmpBearingTemp"; //监视真空泵轴承温度
         #endregion
         protected override void Process()
         {
-            double vUnitLoad = AnalogValue(c_unitLoad);
-            bool unitLoadCondition = this.SetReset(vUnitLoad > 50, vUnitLoad < 10, "UnitLoadCondition");
-            bool checkPmpBearingTemp = this.BooleanSetting(s_checkPmpBearingTemp);
+
             
 
 

@@ -1,12 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="UnitMonitorServer.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
   <Profiles />
-  <Settings>
-    <Setting Name="ServerName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">#5#6机监控服务</Value>
-    </Setting>
-    <Setting Name="Port" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1904</Value>
-    </Setting>
-  </Settings>
+  <Settings />
 </SettingsFile>

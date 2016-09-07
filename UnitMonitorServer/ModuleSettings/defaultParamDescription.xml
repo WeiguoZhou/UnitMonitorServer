@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<taskParamDescriptions>
+		<taskParamDescription key="taskName" description="任务名称" />
+		<taskParamDescription key="taskPath" description="任务路径" />
+		<taskParamDescription key="taskModuleName" description="任务模块名称，该名称即任务执行时要调用的类名称" />
+		<taskParamDescription key="configFileInfo" description="任务的配置文件，所有的配置信息均保存在配置文件中" />
+		<taskParamDescription key="isRunning" description="任务是否在运行" />
+		<taskParamDescription key="beginTime" description="任务运行的开始时间" />
+		<taskParamDescription key="period" description="任务运行的周期（单位是秒），在配置文件中设定" />
+		<taskParamDescription key="runCount" description="任务自启动以来的总运行次数" />
+	</taskParamDescriptions>
+	<funParamDescriptions>
+		<funParamDescription key="" description="" />
+	</funParamDescriptions>
+	<pointParamDescriptions>
+		<pointParamDescription key="id" description="点在edna中的点地址"/>
+		<pointParamDescription key="index" description="点在FunGroup的点表中的序号，此序号在同一FunGroup中不能重复"/>
+		<pointParamDescription key="allowAlarm" description="是否允许发送报警，设置此值为false时将关闭此点的报警功能"/>
+		<pointParamDescription key="value" description="点的值"/>
+		<pointParamDescription key="description" description="点的描述"/>
+		<pointParamDescription key="onTimeDelay" description="算法参数：开关量点值变为1,电气设备或阀门启动或开启后的时间延迟值，此时间满足后输出"/>
+		<pointParamDescription key="offTimeDelay" description="算法参数：开关量点值变为0,电气设备或阀门停止或关闭后的时间延迟值，此时间满足后输出"/>
+		<pointParamDescription key="timeDelay" description="算法参数：条件满足后的时间延迟值，此时间满足后输出"/>
+		<pointParamDescription key="onDelayAlarm" description="onDelay算法条件满足后输出的报警内容"/>
+		<pointParamDescription key="offDelayAlarm" description="offDelay算法条件满足后输出的报警内容"/>
+		<pointParamDescription key="changedOnAlarm" description="开关量由0变为1时输出的报警内容"/>
+		<pointParamDescription key="changedOffAlarm" description="开关量由1变为0时输出的报警内容"/>
+		<pointParamDescription key="lowValue" description="模拟量点低报警设定值"/>
+		<pointParamDescription key="lowResetValue" description="模拟量点低报警复位设定值"/>
+		<pointParamDescription key="lowValueTimeDelay" description="模拟量点低报警延时设定值"/>
+		<pointParamDescription key="lowAlarm" description="模拟量点低报警输出内容，如不设置将发内部预设的报警内容"/>
+		<pointParamDescription key="highValue" description="模拟量点高报警设定值"/>
+		<pointParamDescription key="highResetValue" description="模拟量点高报警复位设定值"/>
+		<pointParamDescription key="highValueTimeDelay" description="模拟量点高报警延时设定值"/>
+		<pointParamDescription key="highAlarm" description="模拟量点高报警输出内容，如不设置将发内部预设的报警内容"/>
+		<pointParamDescription key="changeLowValue" description="模拟量点变化幅度低设定值"/>
+		<pointParamDescription key="changeLowTimeDelay" description="模拟量点变化幅度低延时值"/>
+		<pointParamDescription key="changeLowAlarm" description="模拟量点变化幅度低报警输出内容"/>
+		<pointParamDescription key="changeHighValue" description="模拟量点变化幅度高设定值"/>
+		<pointParamDescription key="changeHighStatisticsPeriod" description="模拟量点变化幅度高统计周期"/>
+		<pointParamDescription key="changeHighAlarm" description="模拟量点变化幅度高输出内容"/>
+		<pointParamDescription key="changeHighCount" description="模拟量点变化幅度高累计设定值，在统计周期时间内，如果发现和上次的值差超设定值即累计一次，如果达累计设定值即输出"/>
+
+
+
+	</pointParamDescriptions>
+</configuration>
